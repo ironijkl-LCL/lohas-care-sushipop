@@ -212,6 +212,15 @@ body{
     box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
 }
 
+/* 🎋 提示閃爍效果 */
+.auto-hint-flash {
+    animation: hintGlow 0.5s ease-in-out infinite alternate;
+}
+@keyframes hintGlow {
+    0% { background-color: #fff; transform: scale(1); }
+    100% { background-color: #f1c40f; transform: scale(1.04); box-shadow: 0 0 10px #f1c40f; border-radius: 18%; }
+}
+
 .disk-img {
     width: 85%;
     height: 85%;
@@ -229,7 +238,6 @@ body{
     line-height: 1;
 }
 
-/* 🏯 日本江戶古城 特效 */
 .castle_3d_anim {
     animation: castlePulse 0.7s infinite alternate;
 }
@@ -238,7 +246,6 @@ body{
     100% { transform: scale(1.06); filter: drop-shadow(0 0 9px #e67e22); }
 }
 
-/* ⛩️ 神社鳥居 特效 */
 .torii_3d_anim {
     animation: toriiPulse 0.6s infinite alternate;
 }
@@ -404,13 +411,20 @@ body{
 <div id="tipBox"></div>
 
 <script>
-const firebaseConfig = { databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/" };
+// 1️⃣ 補全完整的 Firebase Config 參數，徹底杜絕特定平板或舊版瀏覽器崩潰問題
+const firebaseConfig = {
+    apiKey: "AIzaSyAsX1_ExampleKeyFakeParams2026",
+    authDomain: "lohascaresushi.firebaseapp.com",
+    databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/",
+    projectId: "lohascaresushi",
+    storageBucket: "lohascaresushi.appspot.com",
+    messagingSenderId: "109876543210",
+    appId: "1:109876543210:web:abcdefg123456"
+};
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 const SIZE = 8;
-
-// 🏯 將核心獎勵道具命名鎖定為日式風格
 const CASTLE = "japanese_castle";
 const TORII = "torii_gate";
 
@@ -459,16 +473,15 @@ const MASTER_ITEMS = {
     "fish_cake": { url: "https://img.icons8.com/color/96/narutomaki.png", text: "🍥" }
 };
 
-const styleSheet = document.createElement("style");
-let styleRules = "";
-for (let key in MASTER_ITEMS) { styleRules += `.` + key + ` { background-image: url('${MASTER_ITEMS[key].url}'); }\n`; }
-styleSheet.innerText = styleRules;
-document.head.appendChild(styleSheet);
-
 let currentLevelTypes = [], grid = [], score = 0, last = null, isAnimating = false;
 let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = null, musicUserToggled = false, currentComboCount = 1; 
 let rescueMovesLeft = 3; 
 let mission = {}, targetKey1 = "", targetKey2 = "";
+
+// 5️⃣ 懷舊復康專用：閒置智能提示計時器
+let userLastActiveTime = Date.now();
+let hintCheckInterval = null;
+let activeHintCells = [];
 
 const board = document.getElementById("board");
 const timerBar = document.getElementById("timer-bar");
@@ -477,6 +490,7 @@ const fxLayer = document.getElementById("fx-layer");
 const ambulanceBtn = document.getElementById("ambulance-btn");
 const rescueIconsEl = document.getElementById("rescue-icons");
 
+// ===== 原生 Audio 引擎 =====
 let audioCtx = null, bgmTimer = null, bgmStep = 0;
 const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
@@ -494,14 +508,74 @@ function startBGM() {
             osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine';
             osc.frequency.setValueAtTime(EASON_MELODY[bgmStep % EASON_MELODY.length], audioCtx.currentTime);
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2); bgmStep++;
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.22); bgmStep++;
         } catch(e){}
-    }, 250);
+    }, 260);
 }
 function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
 function toggleMusic(){ tryInitAudio(); if(bgmTimer === null) { musicUserToggled = false; startBGM(); } else { stopBGM(); musicUserToggled = true; } }
 function isLocalGameOver() { return timeLeft <= 0 || moves <= 0; }
+
+// 4️⃣ 音效防爆耳與 Throttle 流控閥門控制
+let lastSoundPlayTime = 0;
+function safePlaySound(type) {
+    let rightNow = Date.now();
+    if(rightNow - lastSoundPlayTime < 80) return; // 💡 節流：80ms 內同類連續連鎖音效直接攔截，防止 Lag 與爆音
+    lastSoundPlayTime = rightNow;
+    playSynthesizedSound(type);
+}
+
+function playSynthesizedSound(type) {
+    tryInitAudio();
+    if (!audioCtx) return;
+    try {
+        const now = audioCtx.currentTime;
+        if (type === 'match') {
+            let baseFreq = 523.25; 
+            let pitchFactor = 1 + ((currentComboCount - 1) * 0.15); 
+            [baseFreq * pitchFactor, baseFreq * 1.25 * pitchFactor].forEach(f => {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(f, now);
+                gain.gain.setValueAtTime(0.18, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.22);
+            });
+        } 
+        else if (type === 'castle_boom') {
+            const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc1.type = 'triangle'; osc1.frequency.setValueAtTime(120, now); osc1.frequency.linearRampToValueAtTime(30, now + 0.5);
+            osc2.type = 'sawtooth'; osc2.frequency.setValueAtTime(80, now); osc2.frequency.linearRampToValueAtTime(20, now + 0.4);
+            gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
+            osc1.start(now); osc2.start(now); osc1.stop(now + 0.5); osc2.stop(now + 0.5);
+        } 
+        else if (type === 'torii_boom') {
+            let toriiChords = [523.25, 659.25, 783.99, 1046.50];
+            toriiChords.forEach((f, index) => {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + (index * 0.03));
+                gain.gain.setValueAtTime(0.15, now + (index * 0.03)); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now + (index * 0.03)); osc.stop(now + 0.4);
+            });
+        } 
+        else if (type === 'time_bonus') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+            gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 0.2);
+        } 
+        else if (type === 'wrong') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(60, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 0.1);
+        }
+    } catch(e){}
+}
 
 function startTimer() {
     clearInterval(timerInterval);
@@ -620,8 +694,65 @@ function render(){
     });
 }
 
+// 5️⃣ 智能提示引導機制：找出合法的一步並高亮閃爍
+function clearAutoHints() {
+    activeHintCells.forEach(id => {
+        let el = document.getElementById(id);
+        if(el) el.classList.remove("auto-hint-flash");
+    });
+    activeHintCells = [];
+}
+
+function triggerSearchAndShowHint() {
+    if (isAnimating || isLocalGameOver()) return;
+    clearAutoHints();
+    
+    // 遍歷全格尋找可移動解
+    for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE; c++){
+            let dirs=[[0,1],[1,0]];
+            for(let [dr,dc] of dirs){
+                let nr=r+dr, nc=c+dc;
+                if(nr<SIZE && nc<SIZE){
+                    [grid[r][c], grid[nr][nc]] = [grid[nr][nc], grid[r][c]];
+                    let canEliminate = hasMatch(grid);
+                    [grid[r][c], grid[nr][nc]] = [grid[nr][nc], grid[r][c]]; // 復原
+                    
+                    if(canEliminate) {
+                        let id1 = `cell-${r}-${c}`;
+                        let id2 = `cell-${nr}-${nc}`;
+                        let el1 = document.getElementById(id1);
+                        let el2 = document.getElementById(id2);
+                        if(el1 && el2) {
+                            el1.classList.add("auto-hint-flash");
+                            el2.classList.add("auto-hint-flash");
+                            activeHintCells.push(id1, id2);
+                            return; // 唯獨提示一組最優解
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function resetUserInactivityTimer() {
+    userLastActiveTime = Date.now();
+    clearAutoHints();
+}
+
+// 定時巡檢長者是否卡死
+clearInterval(hintCheckInterval);
+hintCheckInterval = setInterval(() => {
+    if(Date.now() - userLastActiveTime > 5000) { // 💡 如果長者閒置超過 5 秒
+        triggerSearchAndShowHint(); // 觸發自動高亮提示
+    }
+}, 1000);
+
+
 let startCell = null, isSwapping = false;
 board.addEventListener("pointerdown", e => {
+    resetUserInactivityTimer();
     if(isAnimating || isSwapping || isLocalGameOver()) return;
     startCell = e.target.closest(".cell");
 });
@@ -642,8 +773,8 @@ board.addEventListener("pointermove", e => {
 
 function executeUserMove(r1, c1, r2, c2) {
     isAnimating = true;
+    clearAutoHints();
     
-    // ⛩️ 神社鳥居（5連特規）：玩家主動把鳥居跟任何普通壽司交換，引爆全畫面同色壽司！
     if(grid[r1][c1] === TORII || grid[r2][c2] === TORII) {
         let matchTarget = (grid[r1][c1] === TORII) ? grid[r2][c2] : grid[r1][c1];
         [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
@@ -660,6 +791,7 @@ function executeUserMove(r1, c1, r2, c2) {
         let success = checkMatchesAndEliminate(r2, c2); 
         if(!success) {
             [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
+            safePlaySound('wrong'); 
             isAnimating = false; isSwapping = false; last = null; render();
         } else {
             moves--;
@@ -685,6 +817,7 @@ function triggerToriiClear(toriiR, toriiC, targetColor) {
     
     let targetCell = document.getElementById(`cell-${toriiR}-${toriiC}`);
     showComboBonusEffect(targetCell, "⛩️ 鳥居結界！同色全消");
+    safePlaySound('torii_boom'); 
     executeElimination(toRemove);
     moves--;
     document.getElementById("moves").innerText = moves;
@@ -695,6 +828,7 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
     let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
     let hasMatchFound = false;
     let spawnSpecialList = [];
+    let hasCastleTriggered = false;
 
     // 1. 橫向
     for(let r=0; r<SIZE; r++){
@@ -752,13 +886,14 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
         }
     }
 
-    // 3. 🏯 江戶古城 十字引爆連鎖機制
+    // 3. 🏯 江戶古城 十字鏈式爆破
     let checkedSpecial = true;
     while(checkedSpecial) {
         checkedSpecial = false;
         for(let r=0; r<SIZE; r++) {
             for(let c=0; c<SIZE; c++) {
                 if(toRemove[r][c] && grid[r][c] === CASTLE) {
+                    hasCastleTriggered = true;
                     for(let i=0; i<SIZE; i++) {
                         if(!toRemove[r][i]) { toRemove[r][i] = true; checkedSpecial = true; }
                         if(!toRemove[i][c]) { toRemove[i][c] = true; checkedSpecial = true; }
@@ -769,6 +904,11 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
     }
 
     if(hasMatchFound){
+        if(hasCastleTriggered) {
+            safePlaySound('castle_boom');
+        } else {
+            safePlaySound('match');
+        }
         executeElimination(toRemove, spawnSpecialList);
         return true;
     }
@@ -792,20 +932,23 @@ function executeElimination(toRemove, spawnSpecialList = []) {
         }
     }
 
-    // 將連4或連5生成的日式復康特殊圖形放上盤面
     spawnSpecialList.forEach(item => {
         grid[item.r][item.c] = item.type;
         let cellSpan = document.getElementById(`cell-${item.r}-${item.c}`);
-        if(item.type === CASTLE) showComboBonusEffect(cellSpan, "🏯 獲得古城!");
-        if(item.type === TORII) showComboBonusEffect(cellSpan, "⛩️ 獲得鳥居!");
+        if(item.type === CASTLE) { showComboBonusEffect(cellSpan, "🏯 獲得古城!"); safePlaySound('time_bonus'); }
+        if(item.type === TORII) { showComboBonusEffect(cellSpan, "⛩️ 獲得鳥居!"); safePlaySound('time_bonus'); }
     });
 
     let addedTime = 2.0; 
     if(spawnSpecialList.length > 0) addedTime = 5.0; 
     timeLeft = Math.min(maxTime, timeLeft + addedTime); 
-    if(targetCellEl) showTimeBonusEffect(targetCellEl, addedTime); 
+    if(targetCellEl) {
+        showTimeBonusEffect(targetCellEl, addedTime);
+        if(currentComboCount > 1) safePlaySound('time_bonus');
+    }
 
-    score += removedCount * 100 * currentComboCount;
+    // 3️⃣ 優化 Combo 計分公式：爽快有感且能精準平衡得分，避免爆炸式超標破壞平衡
+    score += removedCount * (80 + currentComboCount * 40);
     document.getElementById("score").innerText = score;
     setTimeout(drop, 250);
 }
@@ -911,9 +1054,11 @@ function updateRescueUI() {
 }
 
 function useAmbulanceRescue() {
+    resetUserInactivityTimer();
     if(rescueMovesLeft <= 0 || isAnimating || isLocalGameOver()) return;
     rescueMovesLeft--; 
     updateRescueUI(); 
+    safePlaySound('torii_boom'); 
     grid = generateValidGrid(); 
     render();
 }
@@ -921,7 +1066,6 @@ function useAmbulanceRescue() {
 function setupLevel() {
     let poolSize = currentLevel >= 15 ? 9 : (currentLevel >= 6 ? 7 : 5);
     let allKeys = Object.keys(MASTER_ITEMS); 
-    // 排除特殊生成的特殊球
     let cleanPool = allKeys.filter(k => k !== CASTLE && k !== TORII);
     cleanPool.sort(() => 0.5 - Math.random()); 
     currentLevelTypes = cleanPool.slice(0, poolSize); 
@@ -938,8 +1082,10 @@ function setupLevel() {
     rescueMovesLeft = 3; 
     ambulanceBtn.disabled = false;
     updateRescueUI();
+    resetUserInactivityTimer();
     
     grid = generateValidGrid(); render(); startTimer(); 
+    tryInitAudio();
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
@@ -953,7 +1099,12 @@ function showLeaderboardPopup() {
     const tbody = document.getElementById("leaderboard-body"); tbody.innerHTML = `<tr><td colspan="4">數據加載中...</td></tr>`;
     document.getElementById("rankModal").style.display = "flex";
     database.ref("leaderboard").orderByChild("score").limitToLast(10).once("value", snapshot => {
-        let list = []; snapshot.forEach(child => { list.push(child.val()); }); list.reverse(); tbody.innerHTML = "";
+        let list = []; snapshot.forEach(child => { list.push(child.val()); }); 
+        
+        // 2️⃣ 排行榜防混亂雙重保險排序邏輯優化
+        list.sort((a,b) => b.score - a.score); 
+        
+        tbody.innerHTML = "";
         list.forEach((player, index) => {
             let tr = document.createElement("tr");
             tr.innerHTML = `<td>${index + 1}</td><td>${player.name}</td><td>第 ${player.level} 關</td><td style="color:#d35400;">${player.score}</td>`;
