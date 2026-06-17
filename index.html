@@ -8,10 +8,9 @@
 <style>
 body{
     margin:0;
-    background:#fcf8f2; /* 🍣 和風暖米色，減輕長者視覺疲勞 */
+    background:#fcf8f2; /* 🍣 和風暖米色 */
     text-align:center;
     font-family: 'Arial Black', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-    /* 🛠️ 強制全局停用任何原生滾動、雙擊放大與縮放，徹底根治長者操作防誤觸 */
     touch-action: none !important;
     user-select: none;
     -webkit-user-select: none;
@@ -23,17 +22,15 @@ body{
     box-sizing: border-box;
 }
 
-/* 遊戲招牌 Logo */
 .game-title {
     margin: 5px 0 0 0;
-    color: #d35400; /* 鮭魚橘紅 */
+    color: #d35400; 
     font-size: 26px;
     font-weight: 900;
     text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff, 3px 3px 5px rgba(0,0,0,0.15);
     letter-spacing: 1px;
 }
 
-/* 關卡資訊與控制面板 */
 .control-panel {
     display: flex;
     justify-content: space-between;
@@ -43,7 +40,7 @@ body{
     padding: 0 10px;
 }
 .level-badge {
-    background: #d35400; /* 統一為主題暖橘 */
+    background: #d35400; 
     color: white;
     padding: 5px 15px;
     border-radius: 15px;
@@ -51,9 +48,9 @@ body{
     font-weight: bold;
     box-shadow: 0 3px 5px rgba(0,0,0,0.1);
 }
-.music-btn, .rank-toggle-btn, .shuffle-btn{
-    height: 40px; /* 符合長者按鈕高度規範 */
-    padding: 0 15px;
+.music-btn, .rank-toggle-btn {
+    height: 40px; 
+    padding: 0 20px;
     border: none; border-radius: 20px;
     background: #2ecc71; color: #fff; font-weight: bold;
     cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.1);
@@ -63,26 +60,25 @@ body{
     justify-content: center;
 }
 .rank-toggle-btn { background: #f39c12; margin-left: 5px; }
-.shuffle-btn { background: #a0522d; margin-left: 5px; } 
-.music-btn:active, .rank-toggle-btn:active, .shuffle-btn:active { transform: scale(0.95); }
+.music-btn:active, .rank-toggle-btn:active { transform: scale(0.95); }
 
-/* ⏱️ 倒計時進度條外殼 */
 .timer-container {
     width: 90%;
     max-width: 480px;
     background: #eddcc9; 
-    height: 16px;
-    border-radius: 8px;
+    height: 18px;
+    border-radius: 9px;
     margin: 8px auto;
     overflow: hidden;
     position: relative;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
-    border: 1px solid #4a3728;
+    border: 2px solid #4a3728;
 }
-/* ⏱️ 倒計時動態進度條本體 */
 .timer-bar {
     width: 100%;
     height: 100%;
+    background: linear-gradient(90deg, #e74c3c, #ff6b6b); 
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     transition: width 0.1s linear;
 }
 .timer-text {
@@ -92,7 +88,6 @@ body{
     margin-top: -1px;
 }
 
-/* 頂部數據欄 */
 .info-bar { 
     font-size: 16px; 
     font-weight: bold; 
@@ -107,7 +102,6 @@ body{
     border: 1px solid #e6dac8;
 }
 
-/* 任務目標欄 - 復康加強對比與尺寸 */
 #mission {
     background: #fff;
     padding: 10px 20px;
@@ -135,37 +129,43 @@ body{
     font-size: 24px;
 }
 
-/* 🍣 店長推薦提示按鈕 */
+/* 🎋 七夕許願竹按鈕 */
 .btn-ambulance {
-    background: linear-gradient(135deg, #4a3728, #2c1e14); 
-    color: white;
-    border: none;
-    height: 44px; /* 長者友善高點擊範圍 */
-    font-size: 16px;
+    background: linear-gradient(135deg, #a2ebd2, #8edeb4); 
+    color: #ffffff; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); 
+    border: 2px solid #27ae60; 
+    height: 46px; 
+    font-size: 17px;
     font-weight: bold;
-    border-radius: 22px;
+    border-radius: 23px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
     margin-bottom: 8px;
     transition: 0.2s;
-    width: 85%;
-    max-width: 320px;
+    width: 90%;
+    max-width: 360px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 .btn-ambulance:active { transform: scale(0.95); }
-.btn-ambulance:disabled { background: #95a5a6; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
+.btn-ambulance:disabled { background: #95a5a6 !important; border: none; cursor: not-allowed; box-shadow: none; opacity: 0.6; color: #fff !important; }
 
-/* 💡 提示閃爍動畫 */
-.hint-flash { animation: flash-glow 0.4s ease-in-out 3; }
-@keyframes flash-glow {
-    0%, 100% { background-color: #fff; }
-    50% { background-color: #f1c40f; transform: scale(1.05); border-radius: 18%; box-shadow: 0 0 15px #f1c40f; }
+.rescue-count-icon {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 20px; 
+    flex-shrink: 0;
 }
 
-/* 棋盤外層容器 */
 .board-container {
     position: relative;
     display: block;
@@ -176,7 +176,6 @@ body{
     touch-action: none !important; 
 }
 
-/* 自動彈性棋盤 */
 .board{
     position: relative;
     display: grid;
@@ -189,9 +188,9 @@ body{
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     border: 4px solid #4a3728;
     touch-action: none !important; 
+    overflow: hidden;
 }
 
-/* 格子自適應螢幕 */
 .cell{
     width: 100%;
     aspect-ratio: 1; 
@@ -201,50 +200,51 @@ body{
     box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
     box-sizing: border-box;
     touch-action: none !important;
+    overflow: hidden; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 復康專用：加粗加醒目的選取框 */
 .selected {
     border: 4px solid #e74c3c !important;
     background: #fff0f0 !important;
     box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
 }
 
-.disk{
-    width: 90%;
-    height: 90%;
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    pointer-events: none; 
-    transition: transform 0.18s cubic-bezier(.3, 1.5, .5, 1);
-    font-size: 7.2vw; /* 長者最愛的超大公仔字型 fallback */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0px 4px 3px rgba(0,0,0,0.15));
+.disk-img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    pointer-events: none;
+    display: block;
+    margin: auto;
 }
 
-.bomb_3d { 
-    background-image: url('https://img.icons8.com/color/96/bomb.png') !important; 
-    animation: pulse 0.8s infinite alternate;
-}
-@keyframes pulse {
-    0% { transform: scale(1); filter: drop-shadow(0 0 2px #e74c3c); }
-    100% { transform: scale(1.1); filter: drop-shadow(0 0 10px #e74c3c); }
+.disk-fallback-text {
+    font-size: 24px;
+    font-weight: bold;
+    pointer-events: none;
+    display: block;
+    line-height: 1;
 }
 
-.rainbow_3d {
-    background-image: url('https://img.icons8.com/color/96/rainbow.png') !important;
-    animation: rainbowPulse 0.6s infinite alternate;
+/* 🏯 日本江戶古城 特效 */
+.castle_3d_anim {
+    animation: castlePulse 0.7s infinite alternate;
 }
-@keyframes rainbowPulse {
-    0% { transform: scale(1); filter: drop-shadow(0 0 4px #f1c40f); }
-    100% { transform: scale(1.15); filter: drop-shadow(0 0 12px #9b59b6); }
+@keyframes castlePulse {
+    0% { transform: scale(0.92); filter: drop-shadow(0 0 3px #d35400); }
+    100% { transform: scale(1.06); filter: drop-shadow(0 0 9px #e67e22); }
+}
+
+/* ⛩️ 神社鳥居 特效 */
+.torii_3d_anim {
+    animation: toriiPulse 0.6s infinite alternate;
+}
+@keyframes toriiPulse {
+    0% { transform: scale(0.92); filter: drop-shadow(0 0 3px #c0392b); }
+    100% { transform: scale(1.06); filter: drop-shadow(0 0 11px #e74c3c); }
 }
 
 #fx-layer {
@@ -282,142 +282,53 @@ body{
     text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
 }
 .combo-bonus-text {
-    font-size: 26px;
-    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px 2px 4px rgba(0,0,0,0.4);
-    transform: scale(1.3);
+    color: #d35400;
+    font-size: 24px;
+    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
 }
 @keyframes floatUpUp {
     0% { transform: translate(0, 0) scale(0.9); opacity: 1; }
     100% { transform: translate(0, -60px) scale(1.1); opacity: 0; }
 }
 
-.rank-modal {
+.rank-modal, .game-over-modal {
     display: none;
     position: fixed;
-    top: 0; left: 0; width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.7);
     z-index: 2000;
     justify-content: center;
     align-items: center;
 }
-.rank-content {
+.rank-content, .game-over-content {
     background: white;
     width: 85%;
     max-width: 400px;
     border-radius: 20px;
     padding: 20px;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     border: 3px solid #4a3728;
 }
-.rank-title {
-    font-size: 22px;
-    color: #4a3728;
-    margin-bottom: 15px;
-    font-weight: 900;
+.go-title { font-size: 28px; color: #d35400; font-weight: 900; margin-bottom: 10px; }
+.go-reason { font-size: 15px; color: #7f8c8d; margin-bottom: 20px; font-weight: bold; }
+.go-stats { background: #f8f9fa; border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left; }
+.go-stats-row { display: flex; justify-content: space-between; font-size: 17px; margin: 8px 0; color: #4a3728; font-weight: bold; }
+.go-btn-group { display: flex; flex-direction: column; gap: 12px; }
+
+.btn-restart, .btn-home, .close-rank-btn {
+    height: 46px; color: white; border: none; font-size: 18px; font-weight: 900; border-radius: 23px; cursor: pointer; width: 100%;
 }
-.rank-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-    font-size: 15px;
-}
+.btn-restart { background: linear-gradient(135deg, #d35400, #b33000); }
+.btn-home { background: linear-gradient(135deg, #f39c12, #d35400); }
+.close-rank-btn { background: #d35400; height: 40px; border-radius: 20px; }
+
+.rank-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 15px; }
 .rank-table th { background: #4a3728; color: white; padding: 6px; }
 .rank-table td { padding: 8px 6px; border-bottom: 1px solid #eee; font-weight: bold; }
-.rank-table tr:nth-child(2) td { color: #f1c40f; } 
-.rank-table tr:nth-child(3) td { color: #95a5a6; } 
-.rank-table tr:nth-child(4) td { color: #d35400; } 
-.close-rank-btn {
-    background: #d35400; color: white; border: none;
-    height: 40px; border-radius: 20px; font-weight: bold;
-    cursor: pointer; width: 100%; font-size: 15px;
-}
-
-.game-over-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(44, 62, 80, 0.85);
-    backdrop-filter: blur(5px);
-    z-index: 3000;
-    justify-content: center;
-    align-items: center;
-}
-.game-over-content {
-    background: radial-gradient(circle, #ffffff 60%, #fffbf5);
-    width: 85%;
-    max-width: 420px;
-    border-radius: 24px;
-    padding: 30px 20px;
-    box-sizing: border-box;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    border: 3px solid #d35400;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-@keyframes popIn {
-    0% { transform: scale(0.7); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.go-title {
-    font-size: 28px;
-    color: #d35400;
-    font-weight: 900;
-    margin-bottom: 10px;
-}
-.go-reason {
-    font-size: 15px;
-    color: #7f8c8d;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-.go-stats {
-    background: #f8f9fa;
-    border-radius: 16px;
-    padding: 15px;
-    margin-bottom: 25px;
-    text-align: left;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-}
-.go-stats-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 17px;
-    margin: 8px 0;
-    color: #4a3728;
-    font-weight: bold;
-}
-
-.go-btn-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.btn-restart, .btn-home {
-    height: 46px;
-    color: white;
-    border: none;
-    font-size: 18px;
-    font-weight: 900;
-    border-radius: 23px;
-    cursor: pointer;
-    width: 100%;
-    transition: 0.2s;
-}
-.btn-restart {
-    background: linear-gradient(135deg, #d35400, #b33000);
-    box-shadow: 0 5px 15px rgba(211, 84, 0, 0.4);
-}
-.btn-home {
-    background: linear-gradient(135deg, #f39c12, #d35400);
-    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
-}
-.btn-restart:active, .btn-home:active { transform: scale(0.96); box-shadow: none; }
 
 @media (min-width: 520px) {
     .board { gap: 6px; }
-    .disk { font-size: 34px; }
+    .disk-fallback-text { font-size: 32px; }
     .particle { font-size: 20px; }
 }
 </style>
@@ -434,7 +345,6 @@ body{
     <div class="level-badge">第 <span id="current-level">1</span> / 100 關</div>
     <div>
         <button class="music-btn" onclick="toggleMusic()">🎵 音樂</button>
-        <button class="shuffle-btn" onclick="userTriggerShuffle()">🎲 洗牌</button>
         <button class="rank-toggle-btn" onclick="showLeaderboardPopup()">🏆 排名</button>
     </div>
 </div>
@@ -453,7 +363,7 @@ body{
 <br>
 
 <button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
-    店長特選推薦：<span id="car-icons" style="display:inline-flex; gap:2px; vertical-align:middle;"></span>
+    🎋 七夕許願竹重排：<span id="rescue-icons" style="display:inline-flex; gap:4px; vertical-align:middle;"></span>
 </button>
 
 <div class="board-container" id="game-container">
@@ -462,18 +372,13 @@ body{
 
 <div id="rankModal" class="rank-modal">
     <div class="rank-content">
-        <div class="rank-title">🏆 全球精明腦榜 (Top 10)</div>
+        <div class="rank-title" style="font-size:22px; font-weight:900; margin-bottom:15px;">🏆 全球精明腦榜 (Top 10)</div>
         <table class="rank-table">
             <thead>
-                <tr>
-                    <th>名次</th>
-                    <th>壽司達人</th>
-                    <th>最高關卡</th>
-                    <th>總得分</th>
-                </tr>
+                <tr><th>名次</th><th>壽司達人</th><th>最高關卡</th><th>總得分</th></tr>
             </thead>
             <tbody id="leaderboard-body">
-                <tr><td colspan="4">排行載入中...</td></tr>
+                <tr><td colspan="4">數據加載中...</td></tr>
             </tbody>
         </table>
         <button class="close-rank-btn" onclick="closeLeaderboardPopup()">返回壽司坊</button>
@@ -485,14 +390,8 @@ body{
         <div class="go-title">🍱 營業時間結束</div>
         <div id="go-reason-text" class="go-reason">步數用盡！未能完成今日壽司訂單！</div>
         <div class="go-stats">
-            <div class="go-stats-row">
-                <span>🚨 停留於關卡：</span>
-                <span id="go-level-val" style="color:#9b59b6;">第 1 關</span>
-            </div>
-            <div class="go-stats-row">
-                <span>🏆 最終結算總分：</span>
-                <span id="go-score-val" style="color:#d35400;">0 分</span>
-            </div>
+            <div class="go-stats-row"><span>🚨 停留於關卡：</span><span id="go-level-val" style="color:#9b59b6;">第 1 關</span></div>
+            <div class="go-stats-row"><span>🏆 最終結算總分：</span><span id="go-score-val" style="color:#d35400;">0 分</span></div>
         </div>
         <div class="go-btn-group">
             <button class="btn-restart" onclick="restartWholeGame()">🔄 重新開始挑戰</button>
@@ -505,19 +404,19 @@ body{
 <div id="tipBox"></div>
 
 <script>
-// ===== ⚙️ Firebase 聯網資料庫設定 =====
-const firebaseConfig = {
-    databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/"
-};
+const firebaseConfig = { databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/" };
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 const SIZE = 8;
-const BOMB = "bomb_3d";
-const RAINBOW = "rainbow_3d";
 
-// 🍣 40 款高清 3D 圖案庫 + 強保險備份文字
+// 🏯 將核心獎勵道具命名鎖定為日式風格
+const CASTLE = "japanese_castle";
+const TORII = "torii_gate";
+
 const MASTER_ITEMS = {
+    "japanese_castle": { url: "https://img.icons8.com/color/96/japanese-castle.png", text: "🏯" },
+    "torii_gate": { url: "https://img.icons8.com/color/96/torii-gate.png", text: "⛩️" },
     "salmon_sushi": { url: "https://img.icons8.com/color/96/sushi.png", text: "🍣" },
     "prawn_sushi": { url: "https://img.icons8.com/color/96/prawn-sushi.png", text: "🍤" },
     "fish_rice": { url: "https://img.icons8.com/color/96/rice-ball.png", text: "🍙" },
@@ -560,172 +459,58 @@ const MASTER_ITEMS = {
     "fish_cake": { url: "https://img.icons8.com/color/96/narutomaki.png", text: "🍥" }
 };
 
-// CSS 動態注入
 const styleSheet = document.createElement("style");
 let styleRules = "";
-for (let key in MASTER_ITEMS) {
-    styleRules += `.` + key + ` { background-image: url('${MASTER_ITEMS[key].url}'); }\n`;
-}
+for (let key in MASTER_ITEMS) { styleRules += `.` + key + ` { background-image: url('${MASTER_ITEMS[key].url}'); }\n`; }
 styleSheet.innerText = styleRules;
 document.head.appendChild(styleSheet);
 
-let currentLevelTypes = []; 
-let grid=[], score=0;
-let last=null; 
-let isAnimating = false;
+let currentLevelTypes = [], grid = [], score = 0, last = null, isAnimating = false;
+let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = null, musicUserToggled = false, currentComboCount = 1; 
 let rescueMovesLeft = 3; 
+let mission = {}, targetKey1 = "", targetKey2 = "";
 
-let currentLevel = 1;
-let moves = 35;
-let maxTime = 90; 
-let timeLeft = 90;
-let timerInterval = null;
-let musicUserToggled = false; 
-
-let currentComboCount = 0; 
-let mission = {};
-let targetKey1 = "", targetKey2 = "";
-
-const tips=[
-"🔥 關卡提升後，訂單目標與壽司款式會動態增加哦！",
-"⏱️ 每消出一組配對，都能增加倒計時秒數！",
-"💣 湊齊4個同款能獲得特製炸彈，引爆可清除全屏！"
-];
-
-const board=document.getElementById("board");
-const gameContainer = document.getElementById("game-container");
-const ambulanceBtn=document.getElementById("ambulance-btn");
-const carIconsEl=document.getElementById("car-icons");
-const timerBar=document.getElementById("timer-bar");
-const timerTextEl=document.getElementById("timer-text");
-const tipBox=document.getElementById("tipBox");
+const board = document.getElementById("board");
+const timerBar = document.getElementById("timer-bar");
+const timerTextEl = document.getElementById("timer-text");
 const fxLayer = document.getElementById("fx-layer");
+const ambulanceBtn = document.getElementById("ambulance-btn");
+const rescueIconsEl = document.getElementById("rescue-icons");
 
-// ===== 原生 Audio 引擎 =====
-let audioCtx = null;
-let bgmTimer = null;
-let bgmStep = 0;
-const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00, 587.33, 523.25, 440.00, 392.00, 349.23, 329.63, 392.00, 349.23, 329.63, 293.66, 329.63, 349.23, 440.00, 392.00, 392.00, 523.25, 493.88, 523.25, 587.33, 659.25, 587.33, 523.25, 440.00, 493.88, 523.25, 392.00, 392.00, 440.00, 493.88, 523.25, 440.00, 349.23, 329.63, 293.66, 349.23, 329.63, 261.63, 261.63, 261.63];
+let audioCtx = null, bgmTimer = null, bgmStep = 0;
+const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
 function tryInitAudio() {
-    try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    } catch(e) {
-        console.error("音訊解鎖失敗:", e);
-    }
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
-
 function startBGM() {
     if (!audioCtx) return;
     if (bgmTimer) clearInterval(bgmTimer);
-    let tempoFactor = 1.0 + (currentLevel - 1) * 0.04; 
-    let tempo = Math.max(200 / tempoFactor, 100);
-    
     bgmTimer = setInterval(() => {
         if (isLocalGameOver() || musicUserToggled || !audioCtx) return;
         try {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            let freq = EASON_MELODY[bgmStep % EASON_MELODY.length];
-            
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine';
+            osc.frequency.setValueAtTime(EASON_MELODY[bgmStep % EASON_MELODY.length], audioCtx.currentTime);
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (tempo / 1000) * 0.95);
-            osc.start();
-            osc.stop(audioCtx.currentTime + (tempo / 1000) * 0.95);
-            bgmStep++;
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2); bgmStep++;
         } catch(e){}
-    }, tempo);
+    }, 250);
 }
-
-function stopBGM() {
-    if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
-}
-
-function playSynthesizedSound(type) {
-    if (!audioCtx) return;
-    try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-        
-        if (type === 'match') {
-            let comboFactor = 1 + (currentComboCount * 0.15);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(783.99 * comboFactor, now);
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-            osc.start(now);
-            osc.stop(now + 0.25);
-        } else if (type === 'wrong') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(160, now);
-            osc.frequency.linearRampToValueAtTime(50, now + 0.08);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-            osc.start(now);
-            osc.stop(now + 0.08);
-        }
-    } catch(e){}
-}
-
-function isLocalGameOver() {
-    return timerInterval === null || timeLeft <= 0 || moves <= 0;
-}
-
-function autoPlayMusic() {
-    tryInitAudio();
-    if (audioCtx && !musicUserToggled) {
-        startBGM();
-        document.removeEventListener("click", autoPlayMusic);
-        document.removeEventListener("touchstart", autoPlayMusic);
-    }
-}
-document.addEventListener("touchstart", autoPlayMusic, { passive: true });
-document.addEventListener("click", autoPlayMusic, { passive: true });
-
-function toggleMusic(){
-    tryInitAudio();
-    if(!audioCtx) return;
-    if(bgmTimer === null) {
-        musicUserToggled = false;
-        startBGM();
-    } else {
-        stopBGM();
-        musicUserToggled = true; 
-    }
-}
-
-function showTip(t){
-    tipBox.innerText=t;
-    tipBox.style.opacity=1;
-    setTimeout(()=>tipBox.style.opacity=0,2200);
-}
+function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
+function toggleMusic(){ tryInitAudio(); if(bgmTimer === null) { musicUserToggled = false; startBGM(); } else { stopBGM(); musicUserToggled = true; } }
+function isLocalGameOver() { return timeLeft <= 0 || moves <= 0; }
 
 function startTimer() {
     clearInterval(timerInterval);
-    maxTime = Math.max(30, 90 - (currentLevel - 1) * 2);
-    timeLeft = maxTime;
+    maxTime = Math.max(30, 90 - (currentLevel - 1) * 2); timeLeft = maxTime;
     timerInterval = setInterval(() => {
         if (isAnimating) return; 
         timeLeft -= 0.1;
-        if (timeLeft <= 0) {
-            timeLeft = 0;
-            clearInterval(timerInterval);
-            checkGameStatus(true); 
-        }
-        const percentage = (timeLeft / maxTime) * 100;
-        timerBar.style.width = percentage + "%";
+        if (timeLeft <= 0) { timeLeft = 0; clearInterval(timerInterval); checkGameStatus(true); }
+        timerBar.style.width = (timeLeft / maxTime) * 100 + "%";
         timerTextEl.innerText = `剩餘時間: ${Math.max(0, timeLeft).toFixed(1)} 秒`;
     }, 100);
 }
@@ -734,46 +519,43 @@ function showTimeBonusEffect(cell, addedTime) {
     if (!cell) return;
     const rect = cell.getBoundingClientRect();
     let bonusText = document.createElement("div");
-    bonusText.className = "time-bonus-text";
-    bonusText.innerText = `+${addedTime.toFixed(1)}s`;
+    bonusText.className = "time-bonus-text"; bonusText.innerText = `+${addedTime.toFixed(1)}s`;
     bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 25) + "px";
     bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 15) + "px";
-    document.body.appendChild(bonusText);
-    setTimeout(() => bonusText.remove(), 800);
+    document.body.appendChild(bonusText); setTimeout(() => bonusText.remove(), 800);
+}
+
+function showComboBonusEffect(cell, textValue) {
+    if (!cell) return;
+    const rect = cell.getBoundingClientRect();
+    let bonusText = document.createElement("div");
+    bonusText.className = "combo-bonus-text"; bonusText.innerText = textValue;
+    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 20) + "px";
+    bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 40) + "px";
+    document.body.appendChild(bonusText); setTimeout(() => bonusText.remove(), 900);
 }
 
 function explodeEffect(r,c){
- const cell=document.getElementById(`cell-${r}-${c}`);
- if(!cell) return;
- const rect = cell.getBoundingClientRect();
- for(let i=0; i<6; i++){
-   let p=document.createElement("div");
-   p.className="particle";
-   p.innerText= "✨"; 
-   p.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 10) + "px";
-   p.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 10) + "px";
-   p.style.setProperty("--x",(Math.random() * 80 - 40) + "px");
-   p.style.setProperty("--y",(Math.random() * 80 - 40) + "px");
-   fxLayer.appendChild(p); 
-   setTimeout(()=>p.remove(),600);
- }
+    const cell = document.getElementById(`cell-${r}-${c}`); if(!cell) return;
+    const rect = cell.getBoundingClientRect();
+    for(let i=0; i<4; i++){
+        let p = document.createElement("div"); p.className = "particle"; p.innerText = "✨"; 
+        p.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 10) + "px";
+        p.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 10) + "px";
+        p.style.setProperty("--x",(Math.random() * 60 - 30) + "px"); p.style.setProperty("--y",(Math.random() * 60 - 30) + "px");
+        fxLayer.appendChild(p); setTimeout(()=>p.remove(),500);
+    }
 }
 
 function create(){
-    let g;
-    let attempts = 0;
-    let len = currentLevelTypes.length;
-    while (attempts < 200) {
+    let g; let len = currentLevelTypes.length;
+    for (let attempts=0; attempts<300; attempts++) {
         g = [];
         for(let r=0; r<SIZE; r++){
-           let row=[];
-           for(let c=0; c<SIZE; c++) {
-               row.push(currentLevelTypes[Math.floor(Math.random()*len)]);
-           }
-           g.push(row);
+            let row=[]; for(let c=0; c<SIZE; c++) row.push(currentLevelTypes[Math.floor(Math.random()*len)]);
+            g.push(row);
         }
         if (!hasMatch(g)) return g;
-        attempts++;
     }
     return g;
 }
@@ -781,7 +563,7 @@ function create(){
 function hasMatch(g){
     for(let r=0; r<SIZE; r++){
         for(let c=0; c<SIZE; c++){
-            if(g[r][c] === BOMB || g[r][c] === RAINBOW) continue;
+            if(g[r][c] === CASTLE || g[r][c] === TORII) continue;
             if(c<=SIZE-3 && g[r][c] && g[r][c]===g[r][c+1] && g[r][c]===g[r][c+2]) return true;
             if(r<=SIZE-3 && g[r][c] && g[r][c]===g[r+1][c] && g[r][c]===g[r+2][c]) return true;
         }
@@ -795,7 +577,7 @@ function countPossibleMoves(g){
         for(let c=0; c<SIZE; c++){
             let dirs=[[0,1],[1,0]];
             for(let [dr,dc] of dirs){
-                let nr=r+dr,nc=c+dc;
+                let nr=r+dr, nc=c+dc;
                 if(nr<SIZE && nc<SIZE){
                     [g[r][c],g[nr][nc]]=[g[nr][nc],g[r][c]];
                     if(hasMatch(g)) count++;
@@ -808,162 +590,224 @@ function countPossibleMoves(g){
 }
 
 function generateValidGrid() {
-    let g;
-    do { g = create(); } while (countPossibleMoves(g) < 2); 
-    return g;
+    let g; do { g = create(); } while (countPossibleMoves(g) < 1); return g;
 }
 
 function render(){
- board.innerHTML="";
- renderMission();
- grid.forEach((row,r)=>{
-   row.forEach((cell,c)=>{
-     let div=document.createElement("div");
-     div.className="cell";
-     div.id=`cell-${r}-${c}`;
-     div.dataset.r=r;
-     div.dataset.c=c;
-     if(last && last.r === r && last.c === c) div.classList.add("selected");
-
-     if(cell){
-       let d=document.createElement("div");
-       if (cell === BOMB) {
-           d.className = "disk bomb_3d";
-       } else if (cell === RAINBOW) {
-           d.className = "disk rainbow_3d"; 
-       } else {
-           d.className = "disk " + cell;
-           d.innerText = MASTER_ITEMS[cell] ? MASTER_ITEMS[cell].text : "";
-       }
-       div.appendChild(d);
-     }
-     board.appendChild(div);
-   });
- });
+    board.innerHTML=""; renderMission();
+    grid.forEach((row,r)=>{
+        row.forEach((cell,c)=>{
+            let div = document.createElement("div"); div.className = "cell"; div.id = `cell-${r}-${c}`;
+            div.dataset.r = r; div.dataset.c = c;
+            if(last && last.r === r && last.c === c) div.classList.add("selected");
+            if(cell){
+                let img = document.createElement("img");
+                img.className = "disk-img";
+                if(cell === CASTLE) img.classList.add("castle_3d_anim");
+                if(cell === TORII) img.classList.add("torii_3d_anim");
+                img.src = MASTER_ITEMS[cell].url;
+                img.onerror = function() {
+                    img.style.display = "none";
+                    let textSpan = document.createElement("span");
+                    textSpan.className = "disk-fallback-text";
+                    textSpan.innerText = MASTER_ITEMS[cell].text;
+                    div.appendChild(textSpan);
+                };
+                div.appendChild(img);
+            }
+            board.appendChild(div);
+        });
+    });
 }
 
-let startCell = null;
-let isSwapping = false;
-board.addEventListener("pointerdown", e=>{
-    if(isAnimating || moves<=0 || timeLeft <= 0 || isSwapping) return;
+let startCell = null, isSwapping = false;
+board.addEventListener("pointerdown", e => {
+    if(isAnimating || isSwapping || isLocalGameOver()) return;
     startCell = e.target.closest(".cell");
 });
-board.addEventListener("pointermove", e=>{
+board.addEventListener("pointermove", e => {
     if(!startCell || isAnimating || isSwapping) return;
     let targetEl = document.elementFromPoint(e.clientX, e.clientY);
     let currentCell = targetEl ? targetEl.closest(".cell") : null;
     if(!currentCell || startCell === currentCell) return;
 
     let r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
-    let r2 = parseInt(currentCell.closest(".cell").dataset.r), c2 = parseInt(currentCell.closest(".cell").dataset.c);
+    let r2 = parseInt(currentCell.dataset.r), c2 = parseInt(currentCell.dataset.c);
     
-    // 🛠️ 復康優化：微調手動滑動間距判定，防止手指顫抖引發誤觸
     if(Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1) {
-        isSwapping = true;
-        startCell = null; 
-        click(r1, c1);
-        click(r2, c2);
-        setTimeout(() => { isSwapping = false; }, 250); // 延長防震緩衝
+        isSwapping = true; startCell = null; 
+        executeUserMove(r1, c1, r2, c2);
     }
 });
 
-function click(r,c){
- if(!last){ last={r,c}; render(); return; }
- let dr=Math.abs(last.r-r);
- let dc=Math.abs(last.c-c);
- if(dr+dc==1){
-   isAnimating = true;
-   [grid[r][c],grid[last.r][last.c]]=[grid[last.r][last.c],grid[r][c]];
-   render();
+function executeUserMove(r1, c1, r2, c2) {
+    isAnimating = true;
+    
+    // ⛩️ 神社鳥居（5連特規）：玩家主動把鳥居跟任何普通壽司交換，引爆全畫面同色壽司！
+    if(grid[r1][c1] === TORII || grid[r2][c2] === TORII) {
+        let matchTarget = (grid[r1][c1] === TORII) ? grid[r2][c2] : grid[r1][c1];
+        [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
+        render();
+        setTimeout(() => { triggerToriiClear(r1, c1, matchTarget); }, 150);
+        return;
+    }
 
-   setTimeout(() => {
-       currentComboCount = 1; 
-       let isCorrect = checkMatchesAndEliminate(); 
-       
-       if(!isCorrect) {
-           [grid[r][c],grid[last.r][last.c]]=[grid[last.r][last.c],grid[r][c]];
-           playSynthesizedSound('wrong'); 
-           isAnimating = false;
-           last = null;
-           render();
-       } else {
-           // 💡 嚴格鎖定：只有在消除正確 branch 下才扣步數
-           moves--;
-           document.getElementById("moves").innerText = moves;
-           last = null;
-       }
-   }, 150);
- } else {
-   last={r,c};
-   render();
- }
+    [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
+    render();
+
+    setTimeout(() => {
+        currentComboCount = 1; 
+        let success = checkMatchesAndEliminate(r2, c2); 
+        if(!success) {
+            [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
+            isAnimating = false; isSwapping = false; last = null; render();
+        } else {
+            moves--;
+            document.getElementById("moves").innerText = moves;
+            last = null; isSwapping = false;
+        }
+    }, 200);
 }
 
-function checkMatchesAndEliminate() {
- let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
- let hasMatchFound = false;
- let matchObjects = [];
+function triggerToriiClear(toriiR, toriiC, targetColor) {
+    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+    toRemove[toriiR][toriiC] = true;
+    
+    if(!targetColor || targetColor === CASTLE || targetColor === TORII) {
+        targetColor = currentLevelTypes[Math.floor(Math.random() * currentLevelTypes.length)];
+    }
 
- for(let r=0; r<SIZE; r++){
-   let cnt = 1;
-   for(let c=1; c<SIZE; c++){
-     if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== BOMB && grid[r][c] !== RAINBOW) cnt++;
-     else {
-       if(cnt >= 3) { matchObjects.push({type: 'H', r, startC: c-cnt, len: cnt}); hasMatchFound = true; }
-       cnt = 1;
-     }
-   }
-   if(cnt >= 3) { matchObjects.push({type: 'H', r, startC: SIZE-cnt, len: cnt}); hasMatchFound = true; }
- }
-
- for(let c=0; c<SIZE; c++){
-   let cnt = 1;
-   for(let r=1; r<SIZE; r++){
-     if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== BOMB && grid[r][c] !== RAINBOW) cnt++;
-     else {
-       if(cnt >= 3) { matchObjects.push({type: 'V', c, startR: r-cnt, len: cnt}); hasMatchFound = true; }
-       cnt = 1;
-     }
-   }
-   if(cnt >= 3) { matchObjects.push({type: 'V', c, startR: SIZE-cnt, len: cnt}); hasMatchFound = true; }
- }
-
- if(hasMatchFound){
-   matchObjects.forEach(m => {
-       if(m.type === 'H') { for(let i=0; i<m.len; i++) toRemove[m.r][m.startC + i] = true; }
-       else { for(let i=0; i<m.len; i++) toRemove[m.startR + i][m.c] = true; }
-   });
-   executeEliminationStep(toRemove, matchObjects);
-   return true;
- }
- return false;
+    for(let r=0; r<SIZE; r++) {
+        for(let c=0; c<SIZE; c++) {
+            if(grid[r][c] === targetColor) toRemove[r][c] = true;
+        }
+    }
+    
+    let targetCell = document.getElementById(`cell-${toriiR}-${toriiC}`);
+    showComboBonusEffect(targetCell, "⛩️ 鳥居結界！同色全消");
+    executeElimination(toRemove);
+    moves--;
+    document.getElementById("moves").innerText = moves;
+    isSwapping = false;
 }
 
-function executeEliminationStep(toRemove, matchObjects) {
-   let removedCount = 0;
-   let targetCellEl = null;
+function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
+    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+    let hasMatchFound = false;
+    let spawnSpecialList = [];
 
-   for(let r=0; r<SIZE; r++){
-     for(let c=0; c<SIZE; c++){
-       if(toRemove[r][c]) {
-         explodeEffect(r,c);
-         if(!targetCellEl) targetCellEl = document.getElementById(`cell-${r}-${c}`);
-         if(grid[r][c] === targetKey1 && mission[targetKey1] > 0) mission[targetKey1]--;
-         if(grid[r][c] === targetKey2 && mission[targetKey2] > 0) mission[targetKey2]--;
-         grid[r][c]=null; 
-         removedCount++;
-       }
-     }
-   }
+    // 1. 橫向
+    for(let r=0; r<SIZE; r++){
+        let matchLen = 1;
+        let matchStart = 0;
+        for(let c=1; c<SIZE; c++){
+            if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) {
+                matchLen++;
+            } else {
+                if(matchLen >= 3) {
+                    hasMatchFound = true;
+                    let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
+                    let spawnC = (movedR === r && movedC >= matchStart && movedC < c) ? movedC : matchStart;
+                    for(let i=matchStart; i<c; i++) toRemove[r][i] = true;
+                    if(type) spawnSpecialList.push({r: r, c: spawnC, type: type});
+                }
+                matchLen = 1;
+                matchStart = c;
+            }
+        }
+        if(matchLen >= 3) {
+            hasMatchFound = true;
+            let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
+            let spawnC = (movedR === r && movedC >= matchStart) ? movedC : matchStart;
+            for(let i=matchStart; i<SIZE; i++) toRemove[r][i] = true;
+            if(type) spawnSpecialList.push({r: r, c: spawnC, type: type});
+        }
+    }
 
-   let addedTime = 2.0;
-   timeLeft = Math.min(maxTime, timeLeft + addedTime); 
-   if(targetCellEl) showTimeBonusEffect(targetCellEl, addedTime); 
+    // 2. 縱向
+    for(let c=0; c<SIZE; c++){
+        let matchLen = 1;
+        let matchStart = 0;
+        for(let r=1; r<SIZE; r++){
+            if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) {
+                matchLen++;
+            } else {
+                if(matchLen >= 3) {
+                    hasMatchFound = true;
+                    let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
+                    let spawnR = (movedC === c && movedR >= matchStart && movedR < r) ? movedR : matchStart;
+                    for(let i=matchStart; i<r; i++) toRemove[i][c] = true;
+                    if(type) spawnSpecialList.push({r: spawnR, c: c, type: type});
+                }
+                matchLen = 1;
+                matchStart = r;
+            }
+        }
+        if(matchLen >= 3) {
+            hasMatchFound = true;
+            let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
+            let spawnR = (movedC === c && movedR >= matchStart) ? movedR : matchStart;
+            for(let i=matchStart; i<SIZE; i++) toRemove[i][c] = true;
+            if(type) spawnSpecialList.push({r: spawnR, c: c, type: type});
+        }
+    }
 
-   score += removedCount * 100 * currentComboCount;
-   document.getElementById("score").innerText = score;
-   playSynthesizedSound('match');
-   setTimeout(drop, 350);
+    // 3. 🏯 江戶古城 十字引爆連鎖機制
+    let checkedSpecial = true;
+    while(checkedSpecial) {
+        checkedSpecial = false;
+        for(let r=0; r<SIZE; r++) {
+            for(let c=0; c<SIZE; c++) {
+                if(toRemove[r][c] && grid[r][c] === CASTLE) {
+                    for(let i=0; i<SIZE; i++) {
+                        if(!toRemove[r][i]) { toRemove[r][i] = true; checkedSpecial = true; }
+                        if(!toRemove[i][c]) { toRemove[i][c] = true; checkedSpecial = true; }
+                    }
+                }
+            }
+        }
+    }
+
+    if(hasMatchFound){
+        executeElimination(toRemove, spawnSpecialList);
+        return true;
+    }
+    return false;
+}
+
+function executeElimination(toRemove, spawnSpecialList = []) {
+    let removedCount = 0;
+    let targetCellEl = null;
+
+    for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE; c++){
+            if(toRemove[r][c] && grid[r][c]) {
+                explodeEffect(r, c);
+                if(!targetCellEl) targetCellEl = document.getElementById(`cell-${r}-${c}`);
+                if(grid[r][c] === targetKey1 && mission[targetKey1] > 0) mission[targetKey1]--;
+                if(grid[r][c] === targetKey2 && mission[targetKey2] > 0) mission[targetKey2]--;
+                grid[r][c] = null; 
+                removedCount++;
+            }
+        }
+    }
+
+    // 將連4或連5生成的日式復康特殊圖形放上盤面
+    spawnSpecialList.forEach(item => {
+        grid[item.r][item.c] = item.type;
+        let cellSpan = document.getElementById(`cell-${item.r}-${item.c}`);
+        if(item.type === CASTLE) showComboBonusEffect(cellSpan, "🏯 獲得古城!");
+        if(item.type === TORII) showComboBonusEffect(cellSpan, "⛩️ 獲得鳥居!");
+    });
+
+    let addedTime = 2.0; 
+    if(spawnSpecialList.length > 0) addedTime = 5.0; 
+    timeLeft = Math.min(maxTime, timeLeft + addedTime); 
+    if(targetCellEl) showTimeBonusEffect(targetCellEl, addedTime); 
+
+    score += removedCount * 100 * currentComboCount;
+    document.getElementById("score").innerText = score;
+    setTimeout(drop, 250);
 }
 
 function autoCheckLoop() {
@@ -978,11 +822,14 @@ function autoCheckLoop() {
       if(cnt >= 3) hasMatchFound=true;
     }
     if(hasMatchFound) {
-        currentComboCount++;
+        currentComboCount++; 
         checkMatchesAndEliminate();
     } else {
-        isAnimating = false;
+        isAnimating = false; 
         checkGameStatus(false);
+        if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) {
+            grid = generateValidGrid(); render();
+        }
     }
 }
 
@@ -999,14 +846,26 @@ function drop(){
         }
     }
     render();
-    setTimeout(autoCheckLoop, 150);
+    
+    setTimeout(() => {
+        let matched = checkMatchesAndEliminate();
+        if(matched) {
+            currentComboCount++; 
+        } else {
+            isAnimating = false; 
+            checkGameStatus(false);
+            if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) {
+                grid = generateValidGrid(); render();
+            }
+        }
+    }, 200);
 }
 
 function renderMission() {
     const missionEl = document.getElementById("mission");
     if(!targetKey1 || !targetKey2) return;
     missionEl.innerHTML = `
-        🎯 認知配對目標：
+        🎯 目標：
         <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey1].url}')">${MASTER_ITEMS[targetKey1].text}</span> 剩餘: ${mission[targetKey1]} ｜ 
         <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey2].url}')">${MASTER_ITEMS[targetKey2].text}</span> 剩餘: ${mission[targetKey2]}
     `;
@@ -1014,121 +873,94 @@ function renderMission() {
 
 function checkGameStatus(timeOut = false) {
     if (mission[targetKey1] <= 0 && mission[targetKey2] <= 0) {
-        clearInterval(timerInterval);
-        currentLevel++; 
-        setupLevel();
-        return;
+        clearInterval(timerInterval); currentLevel++; setupLevel(); return;
     } 
     if (moves <= 0 || timeOut) {
-        clearInterval(timerInterval);
-        stopBGM();
+        clearInterval(timerInterval); stopBGM();
         document.getElementById("gameOverModal").style.display = "flex";
         uploadScoreToFirebase();
     }
 }
 
-function restartWholeGame() {
-    document.getElementById("gameOverModal").style.display = "none";
-    currentLevel = 1; score = 0;
-    document.getElementById("score").innerText = score;
-    setupLevel();
+function restartWholeGame() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; document.getElementById("score").innerText = score; setupLevel(); }
+function returnToGameHome() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; setupLevel(); }
+
+function updateRescueUI() {
+    rescueIconsEl.innerHTML = "";
+    if(rescueMovesLeft <= 0) {
+        rescueIconsEl.innerText = "次數用盡 ❌";
+        rescueIconsEl.style.color = "#e74c3c";
+        ambulanceBtn.disabled = true;
+        return;
+    }
+    
+    for(let i=0; i<rescueMovesLeft; i++) {
+        let span = document.createElement("span");
+        span.className = "rescue-count-icon";
+        span.style.position = "relative";
+        span.innerHTML = `<span style="font-size:20px; font-weight:normal; line-height:24px;">🎋</span>`;
+        
+        let imgTest = new Image();
+        imgTest.src = 'https://img.icons8.com/color/96/tanabata-tree.png';
+        imgTest.onload = function() {
+            span.style.backgroundImage = "url('https://img.icons8.com/color/96/tanabata-tree.png')";
+            span.innerHTML = ""; 
+        };
+        rescueIconsEl.appendChild(span);
+    }
 }
 
-function returnToGameHome() {
-    document.getElementById("gameOverModal").style.display = "none";
-    currentLevel = 1; score = 0;
-    setupLevel();
-}
-
-function userTriggerShuffle() {
-    if(isAnimating || moves <= 0 || timeLeft <= 0) return;
+function useAmbulanceRescue() {
+    if(rescueMovesLeft <= 0 || isAnimating || isLocalGameOver()) return;
+    rescueMovesLeft--; 
+    updateRescueUI(); 
     grid = generateValidGrid(); 
     render();
 }
 
 function setupLevel() {
-    document.getElementById("current-level").innerText = currentLevel;
     let poolSize = currentLevel >= 15 ? 9 : (currentLevel >= 6 ? 7 : 5);
-    let allKeys = Object.keys(MASTER_ITEMS);
-    allKeys.sort(() => 0.5 - Math.random()); 
-    currentLevelTypes = allKeys.slice(0, poolSize); 
+    let allKeys = Object.keys(MASTER_ITEMS); 
+    // 排除特殊生成的特殊球
+    let cleanPool = allKeys.filter(k => k !== CASTLE && k !== TORII);
+    cleanPool.sort(() => 0.5 - Math.random()); 
+    currentLevelTypes = cleanPool.slice(0, poolSize); 
     
-    targetKey1 = currentLevelTypes[0];
-    targetKey2 = currentLevelTypes[1];
+    targetKey1 = currentLevelTypes[0]; targetKey2 = currentLevelTypes[1];
     let targetCount = Math.min(30, 8 + Math.floor(currentLevel / 2));
     mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
     
     moves = Math.min(50, 35 + Math.floor(currentLevel / 5));
     document.getElementById("moves").innerText = moves;
-    isAnimating = false;
+    document.getElementById("current-level").innerText = currentLevel;
     
-    grid = generateValidGrid();
-    render();
-    startTimer(); 
+    isAnimating = false; isSwapping = false; last = null;
+    rescueMovesLeft = 3; 
+    ambulanceBtn.disabled = false;
+    updateRescueUI();
+    
+    grid = generateValidGrid(); render(); startTimer(); 
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
-function useAmbulanceRescue() {
-    if(rescueMovesLeft <= 0 || isAnimating) return;
-    showTip("💡 店長已為您自動調配盤面最佳排布！");
-    grid = generateValidGrid();
-    render();
-}
-
-// ===== Firebase 雲端分數同步引擎 =====
 function uploadScoreToFirebase() {
-    let name = prompt("🍣 留名壽司坊！請輸入您的長者暱稱：", "精明老饕");
-    if (name === null) name = "無名傳奇";
-    name = name.trim() === "" ? "精明老饕" : name;
-
-    database.ref("leaderboard").push({
-        name: name,
-        level: currentLevel,
-        score: score,
-        timestamp: Date.now()
-    }).then(() => {
-        showTip("🚀 分數已同步至全球精明腦排行！");
-    }).catch(err => {
-        console.error("同步失敗：", err);
-    });
+    let name = prompt("🍣 請輸入您的長者暱稱：", "精明老饕");
+    if (name === null) name = "無名傳奇"; name = name.trim() === "" ? "精明老饕" : name;
+    database.ref("leaderboard").push({ name: name, level: currentLevel, score: score, timestamp: Date.now() });
 }
 
 function showLeaderboardPopup() { 
-    const tbody = document.getElementById("leaderboard-body");
-    tbody.innerHTML = `<tr><td colspan="4">🍱 雲端數據加載中...</td></tr>`;
+    const tbody = document.getElementById("leaderboard-body"); tbody.innerHTML = `<tr><td colspan="4">數據加載中...</td></tr>`;
     document.getElementById("rankModal").style.display = "flex";
-    
     database.ref("leaderboard").orderByChild("score").limitToLast(10).once("value", snapshot => {
-        let list = [];
-        snapshot.forEach(child => { list.push(child.val()); });
-        list.reverse();
-
-        tbody.innerHTML = "";
-        if(list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4">目前榜單空空如也，快來拿下第一！</td></tr>`;
-            return;
-        }
-
+        let list = []; snapshot.forEach(child => { list.push(child.val()); }); list.reverse(); tbody.innerHTML = "";
         list.forEach((player, index) => {
             let tr = document.createElement("tr");
-            let rankMedal = index + 1;
-            if (index === 0) rankMedal = "🥇";
-            if (index === 1) rankMedal = "🥈";
-            if (index === 2) rankMedal = "🥉";
-
-            let showLevelText = player.level ? `第 ${player.level} 關` : "未知";
-
-            tr.innerHTML = `
-                <td>${rankMedal}</td>
-                <td style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${player.name}</td>
-                <td>${showLevelText}</td>
-                <td style="color:#d35400;">${player.score}</td>
-            `;
+            tr.innerHTML = `<td>${index + 1}</td><td>${player.name}</td><td>第 ${player.level} 關</td><td style="color:#d35400;">${player.score}</td>`;
             tbody.appendChild(tr);
         });
     });
 }
-
 function closeLeaderboardPopup() { document.getElementById("rankModal").style.display = "none"; }
 
 setupLevel();
