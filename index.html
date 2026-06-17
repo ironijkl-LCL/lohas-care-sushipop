@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>活腦益智壽司坊! 40款大滿貫神級極致流暢版</title>
+<title>活腦益智壽司坊! 40款大滿貫復康訓練流暢版</title>
 
 <style>
 body{
@@ -107,32 +107,32 @@ body{
     border: 1px solid #e6dac8;
 }
 
-/* 任務目標欄 */
+/* 任務目標欄 - 復康加強對比與尺寸 */
 #mission {
     background: #fff;
-    padding: 8px 15px;
-    border-radius: 12px;
+    padding: 10px 20px;
+    border-radius: 14px;
     display: inline-flex;
     gap: 15px;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    font-size: 15px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    font-weight: 900;
+    font-size: 17px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     margin: 2px auto 8px auto;
-    border: 2px solid #e67e22;
-    color: #4a3728;
+    border: 3px solid #e67e22;
+    color: #2c3e50;
 }
 .mission-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    font-size: 22px;
+    font-size: 24px;
 }
 
 /* 🍣 店長推薦提示按鈕 */
@@ -203,9 +203,11 @@ body{
     touch-action: none !important;
 }
 
+/* 復康專用：加粗加醒目的選取框 */
 .selected {
-    border: 3px solid #e74c3c !important;
-    background: #ffeaea !important;
+    border: 4px solid #e74c3c !important;
+    background: #fff0f0 !important;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
 }
 
 .disk{
@@ -220,7 +222,7 @@ body{
     cursor: pointer;
     pointer-events: none; 
     transition: transform 0.18s cubic-bezier(.3, 1.5, .5, 1);
-    font-size: 7vw; /* 長者最愛的超大公仔字型 fallback */
+    font-size: 7.2vw; /* 長者最愛的超大公仔字型 fallback */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -306,6 +308,7 @@ body{
     border-radius: 20px;
     padding: 20px;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     border: 3px solid #4a3728;
 }
@@ -513,7 +516,7 @@ const SIZE = 8;
 const BOMB = "bomb_3d";
 const RAINBOW = "rainbow_3d";
 
-// 🍣 💯 補全 40 款圖案的 3D 連結及與其對應的 Emoji 公仔，確保雙重保險萬無一失
+// 🍣 40 款高清 3D 圖案庫 + 強保險備份文字
 const MASTER_ITEMS = {
     "salmon_sushi": { url: "https://img.icons8.com/color/96/sushi.png", text: "🍣" },
     "prawn_sushi": { url: "https://img.icons8.com/color/96/prawn-sushi.png", text: "🍤" },
@@ -557,7 +560,7 @@ const MASTER_ITEMS = {
     "fish_cake": { url: "https://img.icons8.com/color/96/narutomaki.png", text: "🍥" }
 };
 
-// CSS 動態注入加上對應的文字樣式控制
+// CSS 動態注入
 const styleSheet = document.createElement("style");
 let styleRules = "";
 for (let key in MASTER_ITEMS) {
@@ -830,7 +833,6 @@ function render(){
            d.className = "disk rainbow_3d"; 
        } else {
            d.className = "disk " + cell;
-           // 💡 核心修正：直接寫入 Emoji 作為基礎底襯，若網絡圖片讀取成功會覆蓋它，失敗則完美顯示 Emoji！
            d.innerText = MASTER_ITEMS[cell] ? MASTER_ITEMS[cell].text : "";
        }
        div.appendChild(d);
@@ -853,14 +855,15 @@ board.addEventListener("pointermove", e=>{
     if(!currentCell || startCell === currentCell) return;
 
     let r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
-    let r2 = parseInt(currentCell.dataset.r), c2 = parseInt(currentCell.dataset.c);
+    let r2 = parseInt(currentCell.closest(".cell").dataset.r), c2 = parseInt(currentCell.closest(".cell").dataset.c);
     
+    // 🛠️ 復康優化：微調手動滑動間距判定，防止手指顫抖引發誤觸
     if(Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1) {
         isSwapping = true;
         startCell = null; 
         click(r1, c1);
         click(r2, c2);
-        setTimeout(() => { isSwapping = false; }, 200);
+        setTimeout(() => { isSwapping = false; }, 250); // 延長防震緩衝
     }
 });
 
@@ -884,6 +887,7 @@ function click(r,c){
            last = null;
            render();
        } else {
+           // 💡 嚴格鎖定：只有在消除正確 branch 下才扣步數
            moves--;
            document.getElementById("moves").innerText = moves;
            last = null;
@@ -1001,9 +1005,8 @@ function drop(){
 function renderMission() {
     const missionEl = document.getElementById("mission");
     if(!targetKey1 || !targetKey2) return;
-    // 💡 核心修正：任務欄同樣加上內置文本公仔雙重保障
     missionEl.innerHTML = `
-        🎯 今日訂單：
+        🎯 認知配對目標：
         <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey1].url}')">${MASTER_ITEMS[targetKey1].text}</span> 剩餘: ${mission[targetKey1]} ｜ 
         <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey2].url}')">${MASTER_ITEMS[targetKey2].text}</span> 剩餘: ${mission[targetKey2]}
     `;
