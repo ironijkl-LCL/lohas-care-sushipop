@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>活腦益智壽司坊! 40款大滿貫神級極致流暢版</title>
+
+<style>
+body{
+    margin:0;
+    background:#fcf8f2; /* 🍣 和風暖米色，減輕長者視覺疲勞 */
+    text-align:center;
+    font-family: 'Arial Black', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    /* 🛠️ 強制全局停用任何原生滾動、雙擊放大與縮放，徹底根治長者操作防誤觸 */
+    touch-action: none !important;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden; 
+    overscroll-behavior: none; 
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 遊戲招牌 Logo */
+.game-title {
+    margin: 5px 0 0 0;
+    color: #d35400; /* 鮭魚橘紅 */
+    font-size: 26px;
+    font-weight: 900;
+    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff, 3px 3px 5px rgba(0,0,0,0.15);
+    letter-spacing: 1px;
+}
+
+/* 關卡資訊與控制面板 */
+.control-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 520px;
+    margin: 5px auto;
+    padding: 0 10px;
+}
+.level-badge {
+    background: #d35400; /* 統一為主題暖橘 */
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+.music-btn, .rank-toggle-btn, .shuffle-btn{
+    height: 40px; /* 符合長者按鈕高度規範 */
+    padding: 0 15px;
+    border: none; border-radius: 20px;
+    background: #2ecc71; color: #fff; font-weight: bold;
+    cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.rank-toggle-btn { background: #f39c12; margin-left: 5px; }
+.shuffle-btn { background: #a0522d; margin-left: 5px; } 
+.music-btn:active, .rank-toggle-btn:active, .shuffle-btn:active { transform: scale(0.95); }
+
+/* ⏱️ 倒計時進度條外殼 */
+.timer-container {
+    width: 90%;
+    max-width: 480px;
+    background: #eddcc9; 
+    height: 16px;
+    border-radius: 8px;
+    margin: 8px auto;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+    border: 1px solid #4a3728;
+}
+/* ⏱️ 倒計時動態進度條本體 */
+.timer-bar {
+    width: 100%;
+    height: 100%;
+    transition: width 0.1s linear;
+}
+.timer-text {
+    font-size: 14px;
+    font-weight: bold;
+    color: #4a3728;
+    margin-top: -1px;
+}
+
+/* 頂部數據欄 */
+.info-bar { 
+    font-size: 16px; 
+    font-weight: bold; 
+    margin: 6px 0; 
+    color: #4a3728; 
+}
+.info-bar span {
+    background: #fff;
+    padding: 5px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e6dac8;
+}
+
+/* 任務目標欄 */
+#mission {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 12px;
+    display: inline-flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 15px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    margin: 2px auto 8px auto;
+    border: 2px solid #e67e22;
+    color: #4a3728;
+}
+.mission-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 22px;
+}
+
+/* 🍣 店長推薦提示按鈕 */
+.btn-ambulance {
+    background: linear-gradient(135deg, #4a3728, #2c1e14); 
+    color: white;
+    border: none;
+    height: 44px; /* 長者友善高點擊範圍 */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 8px;
+    transition: 0.2s;
+    width: 85%;
+    max-width: 320px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.btn-ambulance:active { transform: scale(0.95); }
+.btn-ambulance:disabled { background: #95a5a6; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
+
+/* 💡 提示閃爍動畫 */
+.hint-flash { animation: flash-glow 0.4s ease-in-out 3; }
+@keyframes flash-glow {
+    0%, 100% { background-color: #fff; }
+    50% { background-color: #f1c40f; transform: scale(1.05); border-radius: 18%; box-shadow: 0 0 15px #f1c40f; }
+}
+
+/* 棋盤外層容器 */
+.board-container {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 520px; 
+    box-sizing: border-box;
+    touch-action: none !important; 
+}
+
+/* 自動彈性棋盤 */
+.board{
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); 
+    gap: 1.5vw; 
+    justify-content: center;
+    background: #e6dac8; 
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    border: 4px solid #4a3728;
+    touch-action: none !important; 
+}
+
+/* 格子自適應螢幕 */
+.cell{
+    width: 100%;
+    aspect-ratio: 1; 
+    background: #fff;
+    border-radius: 18%;
+    position: relative;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    touch-action: none !important;
+}
+
+.selected {
+    border: 3px solid #e74c3c !important;
+    background: #ffeaea !important;
+}
+
+.disk{
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    pointer-events: none; 
+    transition: transform 0.18s cubic-bezier(.3, 1.5, .5, 1);
+    font-size: 7vw; /* 長者最愛的超大公仔字型 fallback */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0px 4px 3px rgba(0,0,0,0.15));
+}
+
+.bomb_3d { 
+    background-image: url('https://img.icons8.com/color/96/bomb.png') !important; 
+    animation: pulse 0.8s infinite alternate;
+}
+@keyframes pulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 2px #e74c3c); }
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 10px #e74c3c); }
+}
+
+.rainbow_3d {
+    background-image: url('https://img.icons8.com/color/96/rainbow.png') !important;
+    animation: rainbowPulse 0.6s infinite alternate;
+}
+@keyframes rainbowPulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 4px #f1c40f); }
+    100% { transform: scale(1.15); filter: drop-shadow(0 0 12px #9b59b6); }
+}
+
+#fx-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.particle {
+    position: absolute;
+    font-size: 5vw; 
+    pointer-events: none;
+    z-index: 999;
+    animation: explode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+@keyframes explode{
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--x),var(--y)) scale(0.5); opacity:0; }
+}
+
+.time-bonus-text, .combo-bonus-text {
+    position: absolute;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 1005;
+    animation: floatUpUp 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+.time-bonus-text {
+    color: #2ecc71;
+    font-size: 20px;
+    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
+}
+.combo-bonus-text {
+    font-size: 26px;
+    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px 2px 4px rgba(0,0,0,0.4);
+    transform: scale(1.3);
+}
+@keyframes floatUpUp {
+    0% { transform: translate(0, 0) scale(0.9); opacity: 1; }
+    100% { transform: translate(0, -60px) scale(1.1); opacity: 0; }
+}
+
+.rank-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.rank-content {
+    background: white;
+    width: 85%;
+    max-width: 400px;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    border: 3px solid #4a3728;
+}
+.rank-title {
+    font-size: 22px;
+    color: #4a3728;
+    margin-bottom: 15px;
+    font-weight: 900;
+}
+.rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+.rank-table th { background: #4a3728; color: white; padding: 6px; }
+.rank-table td { padding: 8px 6px; border-bottom: 1px solid #eee; font-weight: bold; }
+.rank-table tr:nth-child(2) td { color: #f1c40f; } 
+.rank-table tr:nth-child(3) td { color: #95a5a6; } 
+.rank-table tr:nth-child(4) td { color: #d35400; } 
+.close-rank-btn {
+    background: #d35400; color: white; border: none;
+    height: 40px; border-radius: 20px; font-weight: bold;
+    cursor: pointer; width: 100%; font-size: 15px;
+}
+
+.game-over-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(44, 62, 80, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+}
+.game-over-content {
+    background: radial-gradient(circle, #ffffff 60%, #fffbf5);
+    width: 85%;
+    max-width: 420px;
+    border-radius: 24px;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    border: 3px solid #d35400;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.go-title {
+    font-size: 28px;
+    color: #d35400;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+.go-reason {
+    font-size: 15px;
+    color: #7f8c8d;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+.go-stats {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 25px;
+    text-align: left;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+.go-stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+    margin: 8px 0;
+    color: #4a3728;
+    font-weight: bold;
+}
+
+.go-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.btn-restart, .btn-home {
+    height: 46px;
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: 900;
+    border-radius: 23px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.2s;
+}
+.btn-restart {
+    background: linear-gradient(135deg, #d35400, #b33000);
+    box-shadow: 0 5px 15px rgba(211, 84, 0, 0.4);
+}
+.btn-home {
+    background: linear-gradient(135deg, #f39c12, #d35400);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+.btn-restart:active, .btn-home:active { transform: scale(0.96); box-shadow: none; }
+
+@media (min-width: 520px) {
+    .board { gap: 6px; }
+    .disk { font-size: 34px; }
+    .particle { font-size: 20px; }
+}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+
+<body>
+
+<div class="game-title">🍣 活腦益智壽司坊</div>
+
+<div class="control-panel">
+    <div class="level-badge">第 <span id="current-level">1</span> / 100 關</div>
+    <div>
+        <button class="music-btn" onclick="toggleMusic()">🎵 音樂</button>
+        <button class="shuffle-btn" onclick="userTriggerShuffle()">🎲 洗牌</button>
+        <button class="rank-toggle-btn" onclick="showLeaderboardPopup()">🏆 排名</button>
+    </div>
+</div>
+
+<div class="timer-container">
+    <div id="timer-bar" class="timer-bar"></div>
+</div>
+<div id="timer-text" class="timer-text">剩餘時間: 90.0 秒</div>
+
+<div class="info-bar">
+    <span>得分: <span id="score" style="color:#d35400;">0</span></span> 
+    <span>步數: <span id="moves" style="color:#2ecc71;">35</span></span>
+</div>
+
+<div id="mission"></div>
+<br>
+
+<button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
+    店長特選推薦：<span id="car-icons" style="display:inline-flex; gap:2px; vertical-align:middle;"></span>
+</button>
+
+<div class="board-container" id="game-container">
+    <div id="board" class="board"></div>
+</div>
+
+<div id="rankModal" class="rank-modal">
+    <div class="rank-content">
+        <div class="rank-title">🏆 全球精明腦榜 (Top 10)</div>
+        <table class="rank-table">
+            <thead>
+                <tr>
+                    <th>名次</th>
+                    <th>壽司達人</th>
+                    <th>最高關卡</th>
+                    <th>總得分</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr><td colspan="4">排行載入中...</td></tr>
+            </tbody>
+        </table>
+        <button class="close-rank-btn" onclick="closeLeaderboardPopup()">返回壽司坊</button>
+    </div>
+</div>
+
+<div id="gameOverModal" class="game-over-modal">
+    <div class="game-over-content">
+        <div class="go-title">🍱 營業時間結束</div>
+        <div id="go-reason-text" class="go-reason">步數用盡！未能完成今日壽司訂單！</div>
+        <div class="go-stats">
+            <div class="go-stats-row">
+                <span>🚨 停留於關卡：</span>
+                <span id="go-level-val" style="color:#9b59b6;">第 1 關</span>
+            </div>
+            <div class="go-stats-row">
+                <span>🏆 最終結算總分：</span>
+                <span id="go-score-val" style="color:#d35400;">0 分</span>
+            </div>
+        </div>
+        <div class="go-btn-group">
+            <button class="btn-restart" onclick="restartWholeGame()">🔄 重新開始挑戰</button>
+            <button class="btn-home" onclick="returnToGameHome()">🏠 返回遊戲首頁</button>
+        </div>
+    </div>
+</div>
+
+<div id="fx-layer"></div>
+<div id="tipBox"></div>
+
+<script>
+// ===== ⚙️ Firebase 聯網資料庫設定 =====
+const firebaseConfig = {
+    databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+const SIZE = 8;
+const BOMB = "bomb_3d";
+const RAINBOW = "rainbow_3d";
+
+// 🍣 💯 補全 40 款圖案的 3D 連結及與其對應的 Emoji 公仔，確保雙重保險萬無一失
+const MASTER_ITEMS = {
+    "salmon_sushi": { url: "https://img.icons8.com/color/96/sushi.png", text: "🍣" },
+    "prawn_sushi": { url: "https://img.icons8.com/color/96/prawn-sushi.png", text: "🍤" },
+    "fish_rice": { url: "https://img.icons8.com/color/96/rice-ball.png", text: "🍙" },
+    "temaki": { url: "https://img.icons8.com/color/96/burrito.png", text: "🌯" }, 
+    "fish_plate": { url: "https://img.icons8.com/color/96/fish.png", text: "🐟" },
+    "octopus": { url: "https://img.icons8.com/color/96/octopus.png", text: "🐙" },
+    "crab_claw": { url: "https://img.icons8.com/color/96/crab.png", text: "🦀" },
+    "green_tea": { url: "https://img.icons8.com/color/96/green-tea.png", text: "🍵" },
+    "bento": { url: "https://img.icons8.com/color/96/bento.png", text: "🍱" },
+    "dumpling": { url: "https://img.icons8.com/color/96/dumpling.png", text: "🥟" },
+    "bowl_rice": { url: "https://img.icons8.com/color/96/rice-bowl.png", text: "🍚" },
+    "noodles": { url: "https://img.icons8.com/color/96/saitama-maru.png", text: "🍜" },
+    "soy_sauce": { url: "https://img.icons8.com/color/96/sauce-bottle.png", text: "🍾" },
+    "egg": { url: "https://img.icons8.com/color/96/fried-eggs.png", text: "🍳" }, 
+    "shrimp": { url: "https://img.icons8.com/color/96/shrimp.png", text: "🦐" },
+    "lobster": { url: "https://img.icons8.com/color/96/lobster.png", text: "🦞" },
+    "lemon": { url: "https://img.icons8.com/color/96/lemon.png", text: "🍋" },
+    "avocado": { url: "https://img.icons8.com/color/96/avocado.png", text: "🥑" },
+    "mushroom": { url: "https://img.icons8.com/color/96/mushrooms.png", text: "🍄" },
+    "chili": { url: "https://img.icons8.com/color/96/chili-pepper.png", text: "🌶️" },
+    "onigiri_seaweed": { url: "https://img.icons8.com/color/96/japanese-rice-ball.png", text: "🍙" },
+    "takoyaki": { url: "https://img.icons8.com/color/96/takoyaki.png", text: "🍡" },
+    "matcha_whisk": { url: "https://img.icons8.com/color/96/matcha-whisk.png", text: "🍵" },
+    "sake": { url: "https://img.icons8.com/color/96/sake.png", text: "🍶" },
+    "ramen_bowl": { url: "https://img.icons8.com/color/96/ramen.png", text: "🍜" },
+    "dango": { url: "https://img.icons8.com/color/96/dango.png", text: "🍡" },
+    "taiyaki": { url: "https://img.icons8.com/color/96/taiyaki.png", text: "🐟" },
+    "tempura": { url: "https://img.icons8.com/color/96/fried-prawn.png", text: "🍤" },
+    "tofu": { url: "https://img.icons8.com/color/96/tofu.png", text: "⬜" },
+    "wasabi": { url: "https://img.icons8.com/color/96/wasabi.png", text: "🟢" },
+    "ginger": { url: "https://img.icons8.com/color/96/ginger.png", text: "🫚" },
+    "garlic": { url: "https://img.icons8.com/color/96/garlic.png", text: "🧄" },
+    "onion": { url: "https://img.icons8.com/color/96/onion.png", text: "🧅" },
+    "carrot": { url: "https://img.icons8.com/color/96/carrot.png", text: "🥕" },
+    "corn": { url: "https://img.icons8.com/color/96/corn.png", text: "🌽" },
+    "cucumber": { url: "https://img.icons8.com/color/96/cucumber.png", text: "🥒" },
+    "eggplant": { url: "https://img.icons8.com/color/96/eggplant.png", text: "🍆" },
+    "tomato": { url: "https://img.icons8.com/color/96/tomato.png", text: "🍅" },
+    "hot_pot": { url: "https://img.icons8.com/color/96/hot-pot.png", text: "🍲" },
+    "fish_cake": { url: "https://img.icons8.com/color/96/narutomaki.png", text: "🍥" }
+};
+
+// CSS 動態注入加上對應的文字樣式控制
+const styleSheet = document.createElement("style");
+let styleRules = "";
+for (let key in MASTER_ITEMS) {
+    styleRules += `.` + key + ` { background-image: url('${MASTER_ITEMS[key].url}'); }\n`;
+}
+styleSheet.innerText = styleRules;
+document.head.appendChild(styleSheet);
+
+let currentLevelTypes = []; 
+let grid=[], score=0;
+let last=null; 
+let isAnimating = false;
+let rescueMovesLeft = 3; 
+
+let currentLevel = 1;
+let moves = 35;
+let maxTime = 90; 
+let timeLeft = 90;
+let timerInterval = null;
+let musicUserToggled = false; 
+
+let currentComboCount = 0; 
+let mission = {};
+let targetKey1 = "", targetKey2 = "";
+
+const tips=[
+"🔥 關卡提升後，訂單目標與壽司款式會動態增加哦！",
+"⏱️ 每消出一組配對，都能增加倒計時秒數！",
+"💣 湊齊4個同款能獲得特製炸彈，引爆可清除全屏！"
+];
+
+const board=document.getElementById("board");
+const gameContainer = document.getElementById("game-container");
+const ambulanceBtn=document.getElementById("ambulance-btn");
+const carIconsEl=document.getElementById("car-icons");
+const timerBar=document.getElementById("timer-bar");
+const timerTextEl=document.getElementById("timer-text");
+const tipBox=document.getElementById("tipBox");
+const fxLayer = document.getElementById("fx-layer");
+
+// ===== 原生 Audio 引擎 =====
+let audioCtx = null;
+let bgmTimer = null;
+let bgmStep = 0;
+const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00, 587.33, 523.25, 440.00, 392.00, 349.23, 329.63, 392.00, 349.23, 329.63, 293.66, 329.63, 349.23, 440.00, 392.00, 392.00, 523.25, 493.88, 523.25, 587.33, 659.25, 587.33, 523.25, 440.00, 493.88, 523.25, 392.00, 392.00, 440.00, 493.88, 523.25, 440.00, 349.23, 329.63, 293.66, 349.23, 329.63, 261.63, 261.63, 261.63];
+
+function tryInitAudio() {
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    } catch(e) {
+        console.error("音訊解鎖失敗:", e);
+    }
+}
+
+function startBGM() {
+    if (!audioCtx) return;
+    if (bgmTimer) clearInterval(bgmTimer);
+    let tempoFactor = 1.0 + (currentLevel - 1) * 0.04; 
+    let tempo = Math.max(200 / tempoFactor, 100);
+    
+    bgmTimer = setInterval(() => {
+        if (isLocalGameOver() || musicUserToggled || !audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            let freq = EASON_MELODY[bgmStep % EASON_MELODY.length];
+            
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (tempo / 1000) * 0.95);
+            osc.start();
+            osc.stop(audioCtx.currentTime + (tempo / 1000) * 0.95);
+            bgmStep++;
+        } catch(e){}
+    }, tempo);
+}
+
+function stopBGM() {
+    if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+}
+
+function playSynthesizedSound(type) {
+    if (!audioCtx) return;
+    try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        
+        if (type === 'match') {
+            let comboFactor = 1 + (currentComboCount * 0.15);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(783.99 * comboFactor, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.linearRampToValueAtTime(50, now + 0.08);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+            osc.start(now);
+            osc.stop(now + 0.08);
+        }
+    } catch(e){}
+}
+
+function isLocalGameOver() {
+    return timerInterval === null || timeLeft <= 0 || moves <= 0;
+}
+
+function autoPlayMusic() {
+    tryInitAudio();
+    if (audioCtx && !musicUserToggled) {
+        startBGM();
+        document.removeEventListener("click", autoPlayMusic);
+        document.removeEventListener("touchstart", autoPlayMusic);
+    }
+}
+document.addEventListener("touchstart", autoPlayMusic, { passive: true });
+document.addEventListener("click", autoPlayMusic, { passive: true });
+
+function toggleMusic(){
+    tryInitAudio();
+    if(!audioCtx) return;
+    if(bgmTimer === null) {
+        musicUserToggled = false;
+        startBGM();
+    } else {
+        stopBGM();
+        musicUserToggled = true; 
+    }
+}
+
+function showTip(t){
+    tipBox.innerText=t;
+    tipBox.style.opacity=1;
+    setTimeout(()=>tipBox.style.opacity=0,2200);
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    maxTime = Math.max(30, 90 - (currentLevel - 1) * 2);
+    timeLeft = maxTime;
+    timerInterval = setInterval(() => {
+        if (isAnimating) return; 
+        timeLeft -= 0.1;
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            clearInterval(timerInterval);
+            checkGameStatus(true); 
+        }
+        const percentage = (timeLeft / maxTime) * 100;
+        timerBar.style.width = percentage + "%";
+        timerTextEl.innerText = `剩餘時間: ${Math.max(0, timeLeft).toFixed(1)} 秒`;
+    }, 100);
+}
+
+function showTimeBonusEffect(cell, addedTime) {
+    if (!cell) return;
+    const rect = cell.getBoundingClientRect();
+    let bonusText = document.createElement("div");
+    bonusText.className = "time-bonus-text";
+    bonusText.innerText = `+${addedTime.toFixed(1)}s`;
+    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 25) + "px";
+    bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 15) + "px";
+    document.body.appendChild(bonusText);
+    setTimeout(() => bonusText.remove(), 800);
+}
+
+function explodeEffect(r,c){
+ const cell=document.getElementById(`cell-${r}-${c}`);
+ if(!cell) return;
+ const rect = cell.getBoundingClientRect();
+ for(let i=0; i<6; i++){
+   let p=document.createElement("div");
+   p.className="particle";
+   p.innerText= "✨"; 
+   p.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 10) + "px";
+   p.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 10) + "px";
+   p.style.setProperty("--x",(Math.random() * 80 - 40) + "px");
+   p.style.setProperty("--y",(Math.random() * 80 - 40) + "px");
+   fxLayer.appendChild(p); 
+   setTimeout(()=>p.remove(),600);
+ }
+}
+
+function create(){
+    let g;
+    let attempts = 0;
+    let len = currentLevelTypes.length;
+    while (attempts < 200) {
+        g = [];
+        for(let r=0; r<SIZE; r++){
+           let row=[];
+           for(let c=0; c<SIZE; c++) {
+               row.push(currentLevelTypes[Math.floor(Math.random()*len)]);
+           }
+           g.push(row);
+        }
+        if (!hasMatch(g)) return g;
+        attempts++;
+    }
+    return g;
+}
+
+function hasMatch(g){
+    for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE; c++){
+            if(g[r][c] === BOMB || g[r][c] === RAINBOW) continue;
+            if(c<=SIZE-3 && g[r][c] && g[r][c]===g[r][c+1] && g[r][c]===g[r][c+2]) return true;
+            if(r<=SIZE-3 && g[r][c] && g[r][c]===g[r+1][c] && g[r][c]===g[r+2][c]) return true;
+        }
+    }
+    return false;
+}
+
+function countPossibleMoves(g){
+    let count = 0;
+    for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE; c++){
+            let dirs=[[0,1],[1,0]];
+            for(let [dr,dc] of dirs){
+                let nr=r+dr,nc=c+dc;
+                if(nr<SIZE && nc<SIZE){
+                    [g[r][c],g[nr][nc]]=[g[nr][nc],g[r][c]];
+                    if(hasMatch(g)) count++;
+                    [g[r][c],g[nr][nc]]=[g[nr][nc],g[r][c]]; 
+                }
+            }
+        }
+    }
+    return count;
+}
+
+function generateValidGrid() {
+    let g;
+    do { g = create(); } while (countPossibleMoves(g) < 2); 
+    return g;
+}
+
+function render(){
+ board.innerHTML="";
+ renderMission();
+ grid.forEach((row,r)=>{
+   row.forEach((cell,c)=>{
+     let div=document.createElement("div");
+     div.className="cell";
+     div.id=`cell-${r}-${c}`;
+     div.dataset.r=r;
+     div.dataset.c=c;
+     if(last && last.r === r && last.c === c) div.classList.add("selected");
+
+     if(cell){
+       let d=document.createElement("div");
+       if (cell === BOMB) {
+           d.className = "disk bomb_3d";
+       } else if (cell === RAINBOW) {
+           d.className = "disk rainbow_3d"; 
+       } else {
+           d.className = "disk " + cell;
+           // 💡 核心修正：直接寫入 Emoji 作為基礎底襯，若網絡圖片讀取成功會覆蓋它，失敗則完美顯示 Emoji！
+           d.innerText = MASTER_ITEMS[cell] ? MASTER_ITEMS[cell].text : "";
+       }
+       div.appendChild(d);
+     }
+     board.appendChild(div);
+   });
+ });
+}
+
+let startCell = null;
+let isSwapping = false;
+board.addEventListener("pointerdown", e=>{
+    if(isAnimating || moves<=0 || timeLeft <= 0 || isSwapping) return;
+    startCell = e.target.closest(".cell");
+});
+board.addEventListener("pointermove", e=>{
+    if(!startCell || isAnimating || isSwapping) return;
+    let targetEl = document.elementFromPoint(e.clientX, e.clientY);
+    let currentCell = targetEl ? targetEl.closest(".cell") : null;
+    if(!currentCell || startCell === currentCell) return;
+
+    let r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
+    let r2 = parseInt(currentCell.dataset.r), c2 = parseInt(currentCell.dataset.c);
+    
+    if(Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1) {
+        isSwapping = true;
+        startCell = null; 
+        click(r1, c1);
+        click(r2, c2);
+        setTimeout(() => { isSwapping = false; }, 200);
+    }
+});
+
+function click(r,c){
+ if(!last){ last={r,c}; render(); return; }
+ let dr=Math.abs(last.r-r);
+ let dc=Math.abs(last.c-c);
+ if(dr+dc==1){
+   isAnimating = true;
+   [grid[r][c],grid[last.r][last.c]]=[grid[last.r][last.c],grid[r][c]];
+   render();
+
+   setTimeout(() => {
+       currentComboCount = 1; 
+       let isCorrect = checkMatchesAndEliminate(); 
+       
+       if(!isCorrect) {
+           [grid[r][c],grid[last.r][last.c]]=[grid[last.r][last.c],grid[r][c]];
+           playSynthesizedSound('wrong'); 
+           isAnimating = false;
+           last = null;
+           render();
+       } else {
+           moves--;
+           document.getElementById("moves").innerText = moves;
+           last = null;
+       }
+   }, 150);
+ } else {
+   last={r,c};
+   render();
+ }
+}
+
+function checkMatchesAndEliminate() {
+ let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+ let hasMatchFound = false;
+ let matchObjects = [];
+
+ for(let r=0; r<SIZE; r++){
+   let cnt = 1;
+   for(let c=1; c<SIZE; c++){
+     if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== BOMB && grid[r][c] !== RAINBOW) cnt++;
+     else {
+       if(cnt >= 3) { matchObjects.push({type: 'H', r, startC: c-cnt, len: cnt}); hasMatchFound = true; }
+       cnt = 1;
+     }
+   }
+   if(cnt >= 3) { matchObjects.push({type: 'H', r, startC: SIZE-cnt, len: cnt}); hasMatchFound = true; }
+ }
+
+ for(let c=0; c<SIZE; c++){
+   let cnt = 1;
+   for(let r=1; r<SIZE; r++){
+     if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== BOMB && grid[r][c] !== RAINBOW) cnt++;
+     else {
+       if(cnt >= 3) { matchObjects.push({type: 'V', c, startR: r-cnt, len: cnt}); hasMatchFound = true; }
+       cnt = 1;
+     }
+   }
+   if(cnt >= 3) { matchObjects.push({type: 'V', c, startR: SIZE-cnt, len: cnt}); hasMatchFound = true; }
+ }
+
+ if(hasMatchFound){
+   matchObjects.forEach(m => {
+       if(m.type === 'H') { for(let i=0; i<m.len; i++) toRemove[m.r][m.startC + i] = true; }
+       else { for(let i=0; i<m.len; i++) toRemove[m.startR + i][m.c] = true; }
+   });
+   executeEliminationStep(toRemove, matchObjects);
+   return true;
+ }
+ return false;
+}
+
+function executeEliminationStep(toRemove, matchObjects) {
+   let removedCount = 0;
+   let targetCellEl = null;
+
+   for(let r=0; r<SIZE; r++){
+     for(let c=0; c<SIZE; c++){
+       if(toRemove[r][c]) {
+         explodeEffect(r,c);
+         if(!targetCellEl) targetCellEl = document.getElementById(`cell-${r}-${c}`);
+         if(grid[r][c] === targetKey1 && mission[targetKey1] > 0) mission[targetKey1]--;
+         if(grid[r][c] === targetKey2 && mission[targetKey2] > 0) mission[targetKey2]--;
+         grid[r][c]=null; 
+         removedCount++;
+       }
+     }
+   }
+
+   let addedTime = 2.0;
+   timeLeft = Math.min(maxTime, timeLeft + addedTime); 
+   if(targetCellEl) showTimeBonusEffect(targetCellEl, addedTime); 
+
+   score += removedCount * 100 * currentComboCount;
+   document.getElementById("score").innerText = score;
+   playSynthesizedSound('match');
+   setTimeout(drop, 350);
+}
+
+function autoCheckLoop() {
+    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+    let hasMatchFound = false;
+    for(let r=0; r<SIZE; r++){
+      let cnt = 1;
+      for(let c=1; c<SIZE; c++){
+        if(grid[r][c] && grid[r][c] === grid[r][c-1]) cnt++;
+        else { if(cnt >= 3) hasMatchFound=true; cnt = 1; }
+      }
+      if(cnt >= 3) hasMatchFound=true;
+    }
+    if(hasMatchFound) {
+        currentComboCount++;
+        checkMatchesAndEliminate();
+    } else {
+        isAnimating = false;
+        checkGameStatus(false);
+    }
+}
+
+function drop(){
+    let len = currentLevelTypes.length;
+    for(let c=0; c<SIZE; c++) {
+        let pointer = SIZE - 1;
+        for(let r=SIZE-1; r>=0; r--) {
+            if(grid[r][c] !== null) { grid[pointer][c] = grid[r][c]; pointer--; }
+        }
+        while(pointer >= 0) {
+            grid[pointer][c] = currentLevelTypes[Math.floor(Math.random() * len)];
+            pointer--;
+        }
+    }
+    render();
+    setTimeout(autoCheckLoop, 150);
+}
+
+function renderMission() {
+    const missionEl = document.getElementById("mission");
+    if(!targetKey1 || !targetKey2) return;
+    // 💡 核心修正：任務欄同樣加上內置文本公仔雙重保障
+    missionEl.innerHTML = `
+        🎯 今日訂單：
+        <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey1].url}')">${MASTER_ITEMS[targetKey1].text}</span> 剩餘: ${mission[targetKey1]} ｜ 
+        <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey2].url}')">${MASTER_ITEMS[targetKey2].text}</span> 剩餘: ${mission[targetKey2]}
+    `;
+}
+
+function checkGameStatus(timeOut = false) {
+    if (mission[targetKey1] <= 0 && mission[targetKey2] <= 0) {
+        clearInterval(timerInterval);
+        currentLevel++; 
+        setupLevel();
+        return;
+    } 
+    if (moves <= 0 || timeOut) {
+        clearInterval(timerInterval);
+        stopBGM();
+        document.getElementById("gameOverModal").style.display = "flex";
+        uploadScoreToFirebase();
+    }
+}
+
+function restartWholeGame() {
+    document.getElementById("gameOverModal").style.display = "none";
+    currentLevel = 1; score = 0;
+    document.getElementById("score").innerText = score;
+    setupLevel();
+}
+
+function returnToGameHome() {
+    document.getElementById("gameOverModal").style.display = "none";
+    currentLevel = 1; score = 0;
+    setupLevel();
+}
+
+function userTriggerShuffle() {
+    if(isAnimating || moves <= 0 || timeLeft <= 0) return;
+    grid = generateValidGrid(); 
+    render();
+}
+
+function setupLevel() {
+    document.getElementById("current-level").innerText = currentLevel;
+    let poolSize = currentLevel >= 15 ? 9 : (currentLevel >= 6 ? 7 : 5);
+    let allKeys = Object.keys(MASTER_ITEMS);
+    allKeys.sort(() => 0.5 - Math.random()); 
+    currentLevelTypes = allKeys.slice(0, poolSize); 
+    
+    targetKey1 = currentLevelTypes[0];
+    targetKey2 = currentLevelTypes[1];
+    let targetCount = Math.min(30, 8 + Math.floor(currentLevel / 2));
+    mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
+    
+    moves = Math.min(50, 35 + Math.floor(currentLevel / 5));
+    document.getElementById("moves").innerText = moves;
+    isAnimating = false;
+    
+    grid = generateValidGrid();
+    render();
+    startTimer(); 
+    if(audioCtx && !musicUserToggled) startBGM();
+}
+
+function useAmbulanceRescue() {
+    if(rescueMovesLeft <= 0 || isAnimating) return;
+    showTip("💡 店長已為您自動調配盤面最佳排布！");
+    grid = generateValidGrid();
+    render();
+}
+
+// ===== Firebase 雲端分數同步引擎 =====
+function uploadScoreToFirebase() {
+    let name = prompt("🍣 留名壽司坊！請輸入您的長者暱稱：", "精明老饕");
+    if (name === null) name = "無名傳奇";
+    name = name.trim() === "" ? "精明老饕" : name;
+
+    database.ref("leaderboard").push({
+        name: name,
+        level: currentLevel,
+        score: score,
+        timestamp: Date.now()
+    }).then(() => {
+        showTip("🚀 分數已同步至全球精明腦排行！");
+    }).catch(err => {
+        console.error("同步失敗：", err);
+    });
+}
+
+function showLeaderboardPopup() { 
+    const tbody = document.getElementById("leaderboard-body");
+    tbody.innerHTML = `<tr><td colspan="4">🍱 雲端數據加載中...</td></tr>`;
+    document.getElementById("rankModal").style.display = "flex";
+    
+    database.ref("leaderboard").orderByChild("score").limitToLast(10).once("value", snapshot => {
+        let list = [];
+        snapshot.forEach(child => { list.push(child.val()); });
+        list.reverse();
+
+        tbody.innerHTML = "";
+        if(list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4">目前榜單空空如也，快來拿下第一！</td></tr>`;
+            return;
+        }
+
+        list.forEach((player, index) => {
+            let tr = document.createElement("tr");
+            let rankMedal = index + 1;
+            if (index === 0) rankMedal = "🥇";
+            if (index === 1) rankMedal = "🥈";
+            if (index === 2) rankMedal = "🥉";
+
+            let showLevelText = player.level ? `第 ${player.level} 關` : "未知";
+
+            tr.innerHTML = `
+                <td>${rankMedal}</td>
+                <td style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${player.name}</td>
+                <td>${showLevelText}</td>
+                <td style="color:#d35400;">${player.score}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+
+function closeLeaderboardPopup() { document.getElementById("rankModal").style.display = "none"; }
+
+setupLevel();
+</script>
+</body>
+</html>
