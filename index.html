@@ -95,7 +95,7 @@ h1 {
     transition: width 0.1s linear;
 }
 
-/* 🎯 廚房急單高度精準鎖死 40px */
+/* 🎯 廚房急單高度固定 40px */
 #mission {
     background: #fff7e6;
     border-radius: 12px;
@@ -115,7 +115,7 @@ h1 {
     box-sizing: border-box;
 }
 
-/* 🎯 Combo 貼紙完全絕對定位，不佔用任何文檔物理空間，防抖動 */
+/* 🎯 Combo 完全獨立圖層絕對定位，物理空間為 0 像素，徹底消滅變大走位 */
 .combo-floating-badge {
     position: absolute;
     top: 72px; 
@@ -173,7 +173,7 @@ button:active {
     justify-content: center;
 }
 
-/* 🎯 棋盤高寬硬寫死 350px 完美正方形，純白底色讓任何裂縫消失 */
+/* 🎯 棋盤高寬嚴格鎖死為 350px 完美正方形，純白底色讓任何裂縫橫線永久隱形 */
 .board {
     display: grid;
     grid-template-columns: repeat(8, 1fr); 
@@ -363,6 +363,7 @@ let currentLevelTypes = [], grid = [], score = 0, last = null, isAnimating = fal
 let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = null, musicUserToggled = false, currentComboCount = 1; 
 let rescueMovesLeft = 3; 
 let mission = {}, targetKey1 = "", targetKey2 = "";
+let reviveUsed = false; // ❤️ 3️⃣ 續命限制變數
 
 let userLastActiveTime = Date.now();
 let hintCheckInterval = null;
@@ -377,6 +378,13 @@ const comboBadge = document.getElementById("combo-badge");
 
 function isLocalGameOver() { return moves <= 0 || timeLeft <= 0; }
 
+// 🪙 6️⃣ 金幣進度儲存系統
+let coins = parseInt(localStorage.getItem("coins") || "0");
+function updateCoins(){
+    localStorage.setItem("coins", coins);
+}
+
+// ===== 🔊 音訊引擎 =====
 let audioCtx = null, bgmTimer = null, bgmStep = 0;
 const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
@@ -543,7 +551,6 @@ function triggerSearchAndShowHint() {
     }
 }
 
-// 🎯 核心修正：將此處橫向判斷死循環中的 r++ 修改為 c++，100% 杜絕執行緒卡死！
 function estimateMatchScore(g){
     let count = 0;
     for(let r=0; r<SIZE; r++){
@@ -727,6 +734,11 @@ function executeElimination(toRemove, spawnSpecialList = []) {
     timeLeft = Math.min(maxTime, timeLeft + addedTime); 
     if(targetCellEl) showBonusEffect(targetCellEl, `+${addedTime.toFixed(0)}s`);
 
+    // 🔥 2️⃣ 增加「爆擊分數字」核心邏輯
+    if(removedCount >= 4 && targetCellEl){
+        showBonusEffect(targetCellEl, `💥 +${removedCount * 80}`, true);
+    }
+
     score += removedCount * (80 + currentComboCount * 40);
     
     let scoreEl = document.getElementById("score");
@@ -755,6 +767,7 @@ function drop(){
     }, 200);
 }
 
+// ✨ 1️⃣ COMBO「消失延遲」優化
 function renderMission() {
     const missionEl = document.getElementById("mission"); if(!targetKey1 || !targetKey2) return;
     
@@ -763,8 +776,11 @@ function renderMission() {
     if(currentComboCount > 1) {
         comboBadge.innerText = `🔥 COMBO x${currentComboCount}`;
         comboBadge.classList.add("combo-active");
-    } else {
-        comboBadge.classList.remove("combo-active");
+        
+        clearTimeout(comboBadge.hideTimer);
+        comboBadge.hideTimer = setTimeout(() => {
+            comboBadge.classList.remove("combo-active");
+        }, 800); // 👈 完美留 0.8 秒多巴胺爽感
     }
 }
 
@@ -774,15 +790,29 @@ function checkGameStatus(timeOut = false) {
     } 
     if (moves <= 0 || timeOut) { 
         clearInterval(timerInterval); stopBGM(); 
-        document.getElementById("go-reason-text").innerText = timeOut ? "⏰ 出餐超時！客人走光了…" : "💸 步數耗盡！差一點就完成！";
+        
+        // 🎯 4️⃣ 「差一點提示」極致營收拉扯升級
+        let remaining = (mission[targetKey1] > 0 ? mission[targetKey1] : 0) + (mission[targetKey2] > 0 ? mission[targetKey2] : 0);
+        let isClose = remaining <= 4;
+        
+        document.getElementById("go-reason-text").innerText = 
+            timeOut ? "⏰ 出餐超時！客人走光了…" : 
+            (isClose ? "🤏 只差最後幾份！再挑戰一次一定過！" : "💸 今日策略失誤！再挑戰一次！");
+            
         document.getElementById("go-level-val").innerText = `第 ${currentLevel} 關`;
         document.getElementById("go-score-val").innerText = score;
         document.getElementById("gameOverModal").style.display = "flex"; 
     }
 }
 
+// ❤️ 3️⃣ 續命機制升級（黃金單局唯一限制）
 function watchAdRevive() {
-    alert("🎬 正在載入廣告影片...\n【廣告播放完畢】成功獲得健康愛心！");
+    if(reviveUsed){
+        alert("⚠️ 本局已使用過復活！每場只能使用一次，重新挑戰吧！");
+        return;
+    }
+    reviveUsed = true;
+    alert("🎬 廣告播放完畢！立即重返戰場！");
     document.getElementById("gameOverModal").style.display = "none";
     moves = 10; 
     timeLeft = 30; 
@@ -806,6 +836,7 @@ function useAmbulanceRescue() {
 }
 
 function setupLevel() {
+    reviveUsed = false; // ❤️ 每局開始前重置續命限制
     let poolSize = currentLevel >= 15 ? 8 : (currentLevel >= 6 ? 6 : 4);
     
     let allKeys = Object.keys(MASTER_ITEMS).filter(k => k !== CASTLE && k !== TORII);
@@ -814,7 +845,9 @@ function setupLevel() {
     
     targetKey1 = currentLevelTypes[0]; 
     targetKey2 = currentLevelTypes[1];
-    let targetCount = Math.min(30, 8 + Math.floor(currentLevel / 2)); 
+    
+    // 📈 5️⃣ 「難度節奏爆改」商業數值曲線
+    let targetCount = Math.min(60, 6 + Math.floor(currentLevel * 1.8)); 
     mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
     
     moves = Math.min(50, 35 + Math.floor(currentLevel / 5)); 
@@ -829,8 +862,11 @@ function setupLevel() {
 }
 
 window.onload = function() { 
+    // 🎁 6️⃣ 每日獎勵 → 變「帳戶進度系統」
     if(!localStorage.getItem("dailyReward") || Date.now() - localStorage.getItem("dailyReward") > 24 * 60 * 60 * 1000){
-        alert("🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已自動存入錢包。");
+        coins += 50;
+        updateCoins();
+        alert(`🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已自動存入帳戶。\\n目前金幣總數：${coins} 🪙`);
         localStorage.setItem("dailyReward", Date.now());
     }
     setupLevel(); 
