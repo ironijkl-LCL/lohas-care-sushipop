@@ -1,280 +1,278 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>活腦益智壽司坊! 40款大滿貫復康訓練流暢版</title>
+<title>Sushi Pop 壽司彈彈樂 VIP ✨</title>
 
 <style>
-body{
-    margin:0;
-    background:#fcf8f2; /* 🍣 和風暖米色 */
-    text-align:center;
-    font-family: 'Arial Black', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-    touch-action: none !important;
+body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
     overflow: hidden; 
-    overscroll-behavior: none; 
-    width: 100vw;
-    height: 100vh;
-    padding: 10px;
+}
+
+/* 🎯 終極鎖死排版防線：固定卡片與棋盤寬高，任何情況下都絕不拉伸 */
+.container {
+    width: 380px;
+    height: 600px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 15px;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative; 
+}
+
+h1 {
+    font-size: 22px;
+    color: #ff6b6b;
+    margin: 0;
+    padding: 0;
+}
+
+.level {
+    margin: 2px 0;
+    font-weight: bold;
+    color: #4a3728;
+    font-size: 15px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    gap: 6px;
+}
+
+.stat-box {
+    background: #f7f7f7;
+    border-radius: 12px;
+    padding: 6px;
+    width: 23%;
+    font-size: 12px;
+    font-weight: bold;
+    color: #4a3728;
     box-sizing: border-box;
 }
 
-.game-title {
-    margin: 5px 0 0 0;
-    color: #d35400; 
-    font-size: 26px;
-    font-weight: 900;
-    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff, 3px 3px 5px rgba(0,0,0,0.15);
-    letter-spacing: 1px;
+#score {
+    display: inline-block;
+    transition: transform 0.1s ease;
 }
-
-.control-panel {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 520px;
-    margin: 5px auto;
-    padding: 0 10px;
-}
-.level-badge {
-    background: #d35400; 
-    color: white;
-    padding: 5px 15px;
-    border-radius: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-}
-.music-btn, .rank-toggle-btn {
-    height: 40px; 
-    padding: 0 20px;
-    border: none; border-radius: 20px;
-    background: #2ecc71; color: #fff; font-weight: bold;
-    cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.rank-toggle-btn { background: #f39c12; margin-left: 5px; }
-.music-btn:active, .rank-toggle-btn:active { transform: scale(0.95); }
 
 .timer-container {
-    width: 90%;
-    max-width: 480px;
+    width: 100%;
     background: #eddcc9; 
-    height: 18px;
-    border-radius: 9px;
-    margin: 8px auto;
+    height: 10px;
+    border-radius: 5px;
+    margin: 4px 0;
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
-    border: 2px solid #4a3728;
+    border: 1px solid #4a3728;
+    box-sizing: border-box;
 }
 .timer-bar {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #e74c3c, #ff6b6b); 
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    background: linear-gradient(90deg, #ff6b6b, #ff4d4d); 
     transition: width 0.1s linear;
 }
-.timer-text {
-    font-size: 14px;
-    font-weight: bold;
-    color: #4a3728;
-    margin-top: -1px;
-}
 
-.info-bar { 
-    font-size: 16px; 
-    font-weight: bold; 
-    margin: 6px 0; 
-    color: #4a3728; 
-}
-.info-bar span {
-    background: #fff;
-    padding: 5px 12px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border: 1px solid #e6dac8;
-}
-
+/* 🎯 廚房急單高度精準鎖死 40px */
 #mission {
-    background: #fff;
-    padding: 10px 20px;
-    border-radius: 14px;
-    display: inline-flex;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    font-weight: 900;
-    font-size: 17px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin: 2px auto 8px auto;
-    border: 3px solid #e67e22;
+    background: #fff7e6;
+    border-radius: 12px;
+    padding: 0 5px;
+    margin: 4px 0;
+    font-size: 13px;
+    font-weight: bold;
     color: #2c3e50;
-}
-.mission-icon {
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
+    border: 1px solid #f1c40f;
+    display: flex;
     justify-content: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    font-size: 24px;
+    align-items: center;
+    height: 40px; 
+    max-height: 40px;
+    min-height: 40px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
-/* 🎋 七夕許願竹按鈕 */
+/* 🎯 Combo 貼紙完全絕對定位，不佔用任何文檔物理空間，防抖動 */
+.combo-floating-badge {
+    position: absolute;
+    top: 72px; 
+    right: 15px;
+    background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 900;
+    box-shadow: 0 4px 8px rgba(255,61,61,0.3);
+    z-index: 999;
+    pointer-events: none;
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    opacity: 0;
+    transform: scale(0.8);
+}
+.combo-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
 .btn-ambulance {
     background: linear-gradient(135deg, #a2ebd2, #8edeb4); 
-    color: #ffffff; 
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); 
+    color: #27ae60; 
     border: 2px solid #27ae60; 
-    height: 46px; 
-    font-size: 17px;
+    padding: 0 8px;
+    font-size: 13px;
     font-weight: bold;
-    border-radius: 23px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    margin-bottom: 8px;
-    transition: 0.2s;
-    width: 90%;
-    max-width: 360px;
+    width: 100%;
+    margin-bottom: 6px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: 6px;
+    box-sizing: border-box;
+    height: 36px;
+    min-height: 36px;
 }
-.btn-ambulance:active { transform: scale(0.95); }
-.btn-ambulance:disabled { background: #95a5a6 !important; border: none; cursor: not-allowed; box-shadow: none; opacity: 0.6; color: #fff !important; }
+.btn-ambulance:disabled { background: #95a5a6 !important; border: none; cursor: not-allowed; opacity: 0.6; color: #fff !important; }
 
-.rescue-count-icon {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    font-size: 20px; 
-    flex-shrink: 0;
+button:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
 }
 
 .board-container {
-    position: relative;
-    display: block;
-    margin: 0 auto;
     width: 100%;
-    max-width: 520px; 
-    box-sizing: border-box;
+    margin: 4px auto 0 auto;
     touch-action: none !important; 
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
 }
 
-.board{
-    position: relative;
+/* 🎯 棋盤高寬硬寫死 350px 完美正方形，純白底色讓任何裂縫消失 */
+.board {
     display: grid;
     grid-template-columns: repeat(8, 1fr); 
-    gap: 1.5vw; 
-    justify-content: center;
-    background: #e6dac8; 
-    padding: 10px;
+    gap: 4px; 
+    background: #ffffff; 
+    padding: 6px;
     border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    border: 4px solid #4a3728;
+    border: 3px solid #4a3728;
     touch-action: none !important; 
     overflow: hidden;
+    box-sizing: border-box;
+    width: 350px; 
+    height: 350px; 
 }
 
-.cell{
+.cell {
     width: 100%;
-    aspect-ratio: 1; 
-    background: #fff;
+    height: 100%;
+    background: #fdfdfd;
     border-radius: 18%;
     position: relative;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1), inset 0 0 4px rgba(0,0,0,0.05);
     box-sizing: border-box;
     touch-action: none !important;
-    overflow: hidden; 
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .selected {
-    border: 4px solid #e74c3c !important;
+    border: 3px solid #e74c3c !important;
     background: #fff0f0 !important;
-    box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
 }
 
-/* 🎋 提示閃爍效果 */
 .auto-hint-flash {
-    animation: hintGlow 0.5s ease-in-out infinite alternate;
-}
-@keyframes hintGlow {
-    0% { background-color: #fff; transform: scale(1); }
-    100% { background-color: #f1c40f; transform: scale(1.04); box-shadow: 0 0 10px #f1c40f; border-radius: 18%; }
+    border: 2px solid #f1c40f !important;
+    background-color: #fef5c8 !important;
+    z-index: 10;
 }
 
-.disk-img {
-    width: 85%;
-    height: 85%;
-    object-fit: contain;
-    pointer-events: none;
-    display: block;
-    margin: auto;
-}
-
-.disk-fallback-text {
-    font-size: 24px;
-    font-weight: bold;
-    pointer-events: none;
-    display: block;
+.disk-emoji {
+    font-size: 26px;
     line-height: 1;
+    pointer-events: none;
 }
 
-.castle_3d_anim {
-    animation: castlePulse 0.7s infinite alternate;
+.cell-castle {
+    border: 3px solid #d35400 !important;
+    background-color: #fff5e6 !important;
 }
-@keyframes castlePulse {
-    0% { transform: scale(0.92); filter: drop-shadow(0 0 3px #d35400); }
-    100% { transform: scale(1.06); filter: drop-shadow(0 0 9px #e67e22); }
-}
-
-.torii_3d_anim {
-    animation: toriiPulse 0.6s infinite alternate;
-}
-@keyframes toriiPulse {
-    0% { transform: scale(0.92); filter: drop-shadow(0 0 3px #c0392b); }
-    100% { transform: scale(1.06); filter: drop-shadow(0 0 11px #e74c3c); }
+.cell-torii {
+    border: 3px solid #c0392b !important;
+    background-color: #ffe6e6 !important;
 }
 
-#fx-layer {
+.game-over-modal {
+    display: none;
     position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 999;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.game-over-content {
+    background: white;
+    width: 85%;
+    max-width: 340px;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
-.particle {
-    position: absolute;
-    font-size: 5vw; 
-    pointer-events: none;
-    z-index: 999;
-    animation: explode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+.fail-box {
+    background: #ffe6e6;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: left;
 }
-@keyframes explode{
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--x),var(--y)) scale(0.5); opacity:0; }
+.fail-box p { margin: 6px 0; font-weight: bold; color: #4a3728; }
+.highlight { color: #ff4d4d; font-weight: bold; }
+
+button.menu-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: block;
+    transition: transform 0.1s ease;
 }
+.retry { background: #ff6b6b; color: white; }
+.home { background: #ddd; color: #4a3728; }
 
 .time-bonus-text, .combo-bonus-text {
     position: absolute;
@@ -283,194 +281,82 @@ body{
     z-index: 1005;
     animation: floatUpUp 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
-.time-bonus-text {
-    color: #2ecc71;
-    font-size: 20px;
-    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
-}
-.combo-bonus-text {
-    color: #d35400;
-    font-size: 24px;
-    text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
-}
+.time-bonus-text { color: #2ecc71; font-size: 18px; text-shadow: 1px 1px 0px #fff; }
+.combo-bonus-text { color: #e67e22; font-size: 19px; text-shadow: 1px 1px 0px #fff; }
 @keyframes floatUpUp {
-    0% { transform: translate(0, 0) scale(0.9); opacity: 1; }
-    100% { transform: translate(0, -60px) scale(1.1); opacity: 0; }
-}
-
-.rank-modal, .game-over-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-}
-.rank-content, .game-over-content {
-    background: white;
-    width: 85%;
-    max-width: 400px;
-    border-radius: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-    border: 3px solid #4a3728;
-}
-.go-title { font-size: 28px; color: #d35400; font-weight: 900; margin-bottom: 10px; }
-.go-reason { font-size: 15px; color: #7f8c8d; margin-bottom: 20px; font-weight: bold; }
-.go-stats { background: #f8f9fa; border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left; }
-.go-stats-row { display: flex; justify-content: space-between; font-size: 17px; margin: 8px 0; color: #4a3728; font-weight: bold; }
-.go-btn-group { display: flex; flex-direction: column; gap: 12px; }
-
-.btn-restart, .btn-home, .close-rank-btn {
-    height: 46px; color: white; border: none; font-size: 18px; font-weight: 900; border-radius: 23px; cursor: pointer; width: 100%;
-}
-.btn-restart { background: linear-gradient(135deg, #d35400, #b33000); }
-.btn-home { background: linear-gradient(135deg, #f39c12, #d35400); }
-.close-rank-btn { background: #d35400; height: 40px; border-radius: 20px; }
-
-.rank-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 15px; }
-.rank-table th { background: #4a3728; color: white; padding: 6px; }
-.rank-table td { padding: 8px 6px; border-bottom: 1px solid #eee; font-weight: bold; }
-
-@media (min-width: 520px) {
-    .board { gap: 6px; }
-    .disk-fallback-text { font-size: 32px; }
-    .particle { font-size: 20px; }
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(0, -35px); opacity: 0; }
 }
 </style>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 
 <body>
 
-<div class="game-title">🍣 活腦益智壽司坊</div>
+<div class="container">
+    <div id="combo-badge" class="combo-floating-badge">🔥 COMBO x2</div>
 
-<div class="control-panel">
-    <div class="level-badge">第 <span id="current-level">1</span> / 100 關</div>
-    <div>
-        <button class="music-btn" onclick="toggleMusic()">🎵 音樂</button>
-        <button class="rank-toggle-btn" onclick="showLeaderboardPopup()">🏆 排名</button>
+    <h1>🍣 Sushi Pop 壽司彈彈樂 VIP ✨</h1>
+    <div style="font-size:12px; color:#999; margin-bottom: 2px;">全港熱玩🔥 3秒上手・停不下來！</div>
+    
+    <div class="level">第 <span id="current-level">1</span> / 100 關</div>
+
+    <div class="stats">
+        <div class="stat-box">⏳ 時間<br><span id="timer-text">90s</span></div>
+        <div class="stat-box">👣 步數<br><span id="moves">35</span></div>
+        <div class="stat-box">🏆 得分<br><span id="score">0</span></div>
+        <div class="stat-box" style="cursor:pointer;" onclick="toggleMusic()">🎵 音樂<br><span id="music-status">開啟</span></div>
     </div>
-</div>
 
-<div class="timer-container">
-    <div id="timer-bar" class="timer-bar"></div>
-</div>
-<div id="timer-text" class="timer-text">剩餘時間: 90.0 秒</div>
+    <div class="timer-container">
+        <div id="timer-bar" class="timer-bar"></div>
+    </div>
 
-<div class="info-bar">
-    <span>得分: <span id="score" style="color:#d35400;">0</span></span> 
-    <span>步數: <span id="moves" style="color:#2ecc71;">35</span></span>
-</div>
+    <div id="mission">🔥 廚房急單！載入中...</div>
 
-<div id="mission"></div>
-<br>
+    <button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
+        ⚡ 緊急整理技能：<span id="rescue-icons">剩 3 次</span>
+    </button>
 
-<button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
-    🎋 七夕許願竹重排：<span id="rescue-icons" style="display:inline-flex; gap:4px; vertical-align:middle;"></span>
-</button>
-
-<div class="board-container" id="game-container">
-    <div id="board" class="board"></div>
-</div>
-
-<div id="rankModal" class="rank-modal">
-    <div class="rank-content">
-        <div class="rank-title" style="font-size:22px; font-weight:900; margin-bottom:15px;">🏆 全球精明腦榜 (Top 10)</div>
-        <table class="rank-table">
-            <thead>
-                <tr><th>名次</th><th>壽司達人</th><th>最高關卡</th><th>總得分</th></tr>
-            </thead>
-            <tbody id="leaderboard-body">
-                <tr><td colspan="4">數據加載中...</td></tr>
-            </tbody>
-        </table>
-        <button class="close-rank-btn" onclick="closeLeaderboardPopup()">返回壽司坊</button>
+    <div class="board-container">
+        <div id="board" class="board"></div>
     </div>
 </div>
 
 <div id="gameOverModal" class="game-over-modal">
     <div class="game-over-content">
-        <div class="go-title">🍱 營業時間結束</div>
-        <div id="go-reason-text" class="go-reason">步數用盡！未能完成今日壽司訂單！</div>
-        <div class="go-stats">
-            <div class="go-stats-row"><span>🚨 停留於關卡：</span><span id="go-level-val" style="color:#9b59b6;">第 1 關</span></div>
-            <div class="go-stats-row"><span>🏆 最終結算總分：</span><span id="go-score-val" style="color:#d35400;">0 分</span></div>
+        <div class="fail-box">
+            <h3 style="margin-top:0; color:#ff6b6b; text-align:center;">💥 訂單爆單失敗！</h3>
+            <p id="go-reason-text">💸 步數耗盡！差一點就完成！</p>
+            <p>卡關：<span id="go-level-val">第 1 關</span></p>
+            <p class="highlight">最終分數：<span id="go-score-val">0</span> 分</p>
         </div>
-        <div class="go-btn-group">
-            <button class="btn-restart" onclick="restartWholeGame()">🔄 重新開始挑戰</button>
-            <button class="btn-home" onclick="returnToGameHome()">🏠 返回遊戲首頁</button>
-        </div>
+        
+        <button class="menu-btn" style="background:#2ecc71; color:white;" onclick="watchAdRevive()">
+            ❤️ 看廣告繼續一次 (差一點點！)
+        </button>
+        <button class="menu-btn retry" onclick="restartWholeGame()">🔄 再挑戰一次（差一點就過！）</button>
+        <button class="menu-btn home" onclick="returnToGameHome()">🏠 返回首頁</button>
     </div>
 </div>
 
-<div id="fx-layer"></div>
-<div id="tipBox"></div>
-
 <script>
-// 1️⃣ 補全完整的 Firebase Config 參數，徹底杜絕特定平板或舊版瀏覽器崩潰問題
-const firebaseConfig = {
-    apiKey: "AIzaSyAsX1_ExampleKeyFakeParams2026",
-    authDomain: "lohascaresushi.firebaseapp.com",
-    databaseURL: "https://lohascaresushi-default-rtdb.firebaseio.com/",
-    projectId: "lohascaresushi",
-    storageBucket: "lohascaresushi.appspot.com",
-    messagingSenderId: "109876543210",
-    appId: "1:109876543210:web:abcdefg123456"
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
 const SIZE = 8;
 const CASTLE = "japanese_castle";
 const TORII = "torii_gate";
 
 const MASTER_ITEMS = {
-    "japanese_castle": { url: "https://img.icons8.com/color/96/japanese-castle.png", text: "🏯" },
-    "torii_gate": { url: "https://img.icons8.com/color/96/torii-gate.png", text: "⛩️" },
-    "salmon_sushi": { url: "https://img.icons8.com/color/96/sushi.png", text: "🍣" },
-    "prawn_sushi": { url: "https://img.icons8.com/color/96/prawn-sushi.png", text: "🍤" },
-    "fish_rice": { url: "https://img.icons8.com/color/96/rice-ball.png", text: "🍙" },
-    "temaki": { url: "https://img.icons8.com/color/96/burrito.png", text: "🌯" }, 
-    "fish_plate": { url: "https://img.icons8.com/color/96/fish.png", text: "🐟" },
-    "octopus": { url: "https://img.icons8.com/color/96/octopus.png", text: "🐙" },
-    "crab_claw": { url: "https://img.icons8.com/color/96/crab.png", text: "🦀" },
-    "green_tea": { url: "https://img.icons8.com/color/96/green-tea.png", text: "🍵" },
-    "bento": { url: "https://img.icons8.com/color/96/bento.png", text: "🍱" },
-    "dumpling": { url: "https://img.icons8.com/color/96/dumpling.png", text: "🥟" },
-    "bowl_rice": { url: "https://img.icons8.com/color/96/rice-bowl.png", text: "🍚" },
-    "noodles": { url: "https://img.icons8.com/color/96/saitama-maru.png", text: "🍜" },
-    "soy_sauce": { url: "https://img.icons8.com/color/96/sauce-bottle.png", text: "🍾" },
-    "egg": { url: "https://img.icons8.com/color/96/fried-eggs.png", text: "🍳" }, 
-    "shrimp": { url: "https://img.icons8.com/color/96/shrimp.png", text: "🦐" },
-    "lobster": { url: "https://img.icons8.com/color/96/lobster.png", text: "🦞" },
-    "lemon": { url: "https://img.icons8.com/color/96/lemon.png", text: "🍋" },
-    "avocado": { url: "https://img.icons8.com/color/96/avocado.png", text: "🥑" },
-    "mushroom": { url: "https://img.icons8.com/color/96/mushrooms.png", text: "🍄" },
-    "chili": { url: "https://img.icons8.com/color/96/chili-pepper.png", text: "🌶️" },
-    "onigiri_seaweed": { url: "https://img.icons8.com/color/96/japanese-rice-ball.png", text: "🍙" },
-    "takoyaki": { url: "https://img.icons8.com/color/96/takoyaki.png", text: "🍡" },
-    "matcha_whisk": { url: "https://img.icons8.com/color/96/matcha-whisk.png", text: "🍵" },
-    "sake": { url: "https://img.icons8.com/color/96/sake.png", text: "🍶" },
-    "ramen_bowl": { url: "https://img.icons8.com/color/96/ramen.png", text: "🍜" },
-    "dango": { url: "https://img.icons8.com/color/96/dango.png", text: "🍡" },
-    "taiyaki": { url: "https://img.icons8.com/color/96/taiyaki.png", text: "🐟" },
-    "tempura": { url: "https://img.icons8.com/color/96/fried-prawn.png", text: "🍤" },
-    "tofu": { url: "https://img.icons8.com/color/96/tofu.png", text: "⬜" },
-    "wasabi": { url: "https://img.icons8.com/color/96/wasabi.png", text: "🟢" },
-    "ginger": { url: "https://img.icons8.com/color/96/ginger.png", text: "🫚" },
-    "garlic": { url: "https://img.icons8.com/color/96/garlic.png", text: "🧄" },
-    "onion": { url: "https://img.icons8.com/color/96/onion.png", text: "🧅" },
-    "carrot": { url: "https://img.icons8.com/color/96/carrot.png", text: "🥕" },
-    "corn": { url: "https://img.icons8.com/color/96/corn.png", text: "🌽" },
-    "cucumber": { url: "https://img.icons8.com/color/96/cucumber.png", text: "🥒" },
-    "eggplant": { url: "https://img.icons8.com/color/96/eggplant.png", text: "🍆" },
-    "tomato": { url: "https://img.icons8.com/color/96/tomato.png", text: "🍅" },
-    "hot_pot": { url: "https://img.icons8.com/color/96/hot-pot.png", text: "🍲" },
-    "fish_cake": { url: "https://img.icons8.com/color/96/narutomaki.png", text: "🍥" }
+    "japanese_castle": { text: "🏯" },
+    "torii_gate": { text: "⛩️" },
+    "salmon_sushi": { text: "🍣" },
+    "prawn_sushi": { text: "🍤" },
+    "fish_rice": { text: "🍙" },
+    "temaki": { text: "🌯" }, 
+    "fish_plate": { text: "🐟" },
+    "octopus": { text: "🐙" },
+    "crab_claw": { text: "🦀" },
+    "green_tea": { text: "🍵" },
+    "bento": { text: "🍱" },
+    "dumpling": { text: "🥟" }
 };
 
 let currentLevelTypes = [], grid = [], score = 0, last = null, isAnimating = false;
@@ -478,7 +364,6 @@ let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = n
 let rescueMovesLeft = 3; 
 let mission = {}, targetKey1 = "", targetKey2 = "";
 
-// 5️⃣ 懷舊復康專用：閒置智能提示計時器
 let userLastActiveTime = Date.now();
 let hintCheckInterval = null;
 let activeHintCells = [];
@@ -486,11 +371,12 @@ let activeHintCells = [];
 const board = document.getElementById("board");
 const timerBar = document.getElementById("timer-bar");
 const timerTextEl = document.getElementById("timer-text");
-const fxLayer = document.getElementById("fx-layer");
 const ambulanceBtn = document.getElementById("ambulance-btn");
 const rescueIconsEl = document.getElementById("rescue-icons");
+const comboBadge = document.getElementById("combo-badge");
 
-// ===== 原生 Audio 引擎 =====
+function isLocalGameOver() { return moves <= 0 || timeLeft <= 0; }
+
 let audioCtx = null, bgmTimer = null, bgmStep = 0;
 const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
@@ -501,79 +387,39 @@ function tryInitAudio() {
 function startBGM() {
     if (!audioCtx) return;
     if (bgmTimer) clearInterval(bgmTimer);
+    document.getElementById("music-status").innerText = "開啟";
     bgmTimer = setInterval(() => {
         if (isLocalGameOver() || musicUserToggled || !audioCtx) return;
         try {
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine';
             osc.frequency.setValueAtTime(EASON_MELODY[bgmStep % EASON_MELODY.length], audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
             osc.start(); osc.stop(audioCtx.currentTime + 0.22); bgmStep++;
         } catch(e){}
-    }, 260);
+    }, 280);
 }
-function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
+function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } document.getElementById("music-status").innerText = "關閉"; }
 function toggleMusic(){ tryInitAudio(); if(bgmTimer === null) { musicUserToggled = false; startBGM(); } else { stopBGM(); musicUserToggled = true; } }
-function isLocalGameOver() { return timeLeft <= 0 || moves <= 0; }
 
-// 4️⃣ 音效防爆耳與 Throttle 流控閥門控制
-let lastSoundPlayTime = 0;
 function safePlaySound(type) {
-    let rightNow = Date.now();
-    if(rightNow - lastSoundPlayTime < 80) return; // 💡 節流：80ms 內同類連續連鎖音效直接攔截，防止 Lag 與爆音
-    lastSoundPlayTime = rightNow;
-    playSynthesizedSound(type);
-}
-
-function playSynthesizedSound(type) {
     tryInitAudio();
-    if (!audioCtx) return;
+    if (!audioCtx || musicUserToggled) return;
     try {
         const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         if (type === 'match') {
-            let baseFreq = 523.25; 
-            let pitchFactor = 1 + ((currentComboCount - 1) * 0.15); 
-            [baseFreq * pitchFactor, baseFreq * 1.25 * pitchFactor].forEach(f => {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(f, now);
-                gain.gain.setValueAtTime(0.18, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(now); osc.stop(now + 0.22);
-            });
-        } 
-        else if (type === 'castle_boom') {
-            const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc1.type = 'triangle'; osc1.frequency.setValueAtTime(120, now); osc1.frequency.linearRampToValueAtTime(30, now + 0.5);
-            osc2.type = 'sawtooth'; osc2.frequency.setValueAtTime(80, now); osc2.frequency.linearRampToValueAtTime(20, now + 0.4);
-            gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-            osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
-            osc1.start(now); osc2.start(now); osc1.stop(now + 0.5); osc2.stop(now + 0.5);
-        } 
-        else if (type === 'torii_boom') {
-            let toriiChords = [523.25, 659.25, 783.99, 1046.50];
-            toriiChords.forEach((f, index) => {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + (index * 0.03));
-                gain.gain.setValueAtTime(0.15, now + (index * 0.03)); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(now + (index * 0.03)); osc.stop(now + 0.4);
-            });
-        } 
-        else if (type === 'time_bonus') {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
-            gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(now); osc.stop(now + 0.2);
-        } 
-        else if (type === 'wrong') {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(60, now + 0.1);
-            gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(now); osc.stop(now + 0.1);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25 * (1 + (currentComboCount - 1) * 0.1), now);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        } else if (type === 'boom') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(40, now + 0.4);
+            gain.gain.setValueAtTime(0.25, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
         }
+        osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(now + 0.4);
     } catch(e){}
 }
 
@@ -585,40 +431,19 @@ function startTimer() {
         timeLeft -= 0.1;
         if (timeLeft <= 0) { timeLeft = 0; clearInterval(timerInterval); checkGameStatus(true); }
         timerBar.style.width = (timeLeft / maxTime) * 100 + "%";
-        timerTextEl.innerText = `剩餘時間: ${Math.max(0, timeLeft).toFixed(1)} 秒`;
+        timerTextEl.innerText = `${Math.max(0, timeLeft).toFixed(0)}s`;
     }, 100);
 }
 
-function showTimeBonusEffect(cell, addedTime) {
+function showBonusEffect(cell, text, isCombo = false) {
     if (!cell) return;
     const rect = cell.getBoundingClientRect();
     let bonusText = document.createElement("div");
-    bonusText.className = "time-bonus-text"; bonusText.innerText = `+${addedTime.toFixed(1)}s`;
-    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 25) + "px";
+    bonusText.className = isCombo ? "combo-bonus-text" : "time-bonus-text"; 
+    bonusText.innerText = text;
+    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 20) + "px";
     bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 15) + "px";
     document.body.appendChild(bonusText); setTimeout(() => bonusText.remove(), 800);
-}
-
-function showComboBonusEffect(cell, textValue) {
-    if (!cell) return;
-    const rect = cell.getBoundingClientRect();
-    let bonusText = document.createElement("div");
-    bonusText.className = "combo-bonus-text"; bonusText.innerText = textValue;
-    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 20) + "px";
-    bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 40) + "px";
-    document.body.appendChild(bonusText); setTimeout(() => bonusText.remove(), 900);
-}
-
-function explodeEffect(r,c){
-    const cell = document.getElementById(`cell-${r}-${c}`); if(!cell) return;
-    const rect = cell.getBoundingClientRect();
-    for(let i=0; i<4; i++){
-        let p = document.createElement("div"); p.className = "particle"; p.innerText = "✨"; 
-        p.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 10) + "px";
-        p.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 10) + "px";
-        p.style.setProperty("--x",(Math.random() * 60 - 30) + "px"); p.style.setProperty("--y",(Math.random() * 60 - 30) + "px");
-        fxLayer.appendChild(p); setTimeout(()=>p.remove(),500);
-    }
 }
 
 function create(){
@@ -675,39 +500,27 @@ function render(){
             div.dataset.r = r; div.dataset.c = c;
             if(last && last.r === r && last.c === c) div.classList.add("selected");
             if(cell){
-                let img = document.createElement("img");
-                img.className = "disk-img";
-                if(cell === CASTLE) img.classList.add("castle_3d_anim");
-                if(cell === TORII) img.classList.add("torii_3d_anim");
-                img.src = MASTER_ITEMS[cell].url;
-                img.onerror = function() {
-                    img.style.display = "none";
-                    let textSpan = document.createElement("span");
-                    textSpan.className = "disk-fallback-text";
-                    textSpan.innerText = MASTER_ITEMS[cell].text;
-                    div.appendChild(textSpan);
-                };
-                div.appendChild(img);
+                if(cell === CASTLE) div.classList.add("cell-castle");
+                if(cell === TORII) div.classList.add("cell-torii");
+                let span = document.createElement("span");
+                span.className = "disk-emoji";
+                span.innerText = MASTER_ITEMS[cell].text;
+                div.appendChild(span);
             }
             board.appendChild(div);
         });
     });
 }
 
-// 5️⃣ 智能提示引導機制：找出合法的一步並高亮閃爍
 function clearAutoHints() {
-    activeHintCells.forEach(id => {
-        let el = document.getElementById(id);
-        if(el) el.classList.remove("auto-hint-flash");
-    });
+    activeHintCells.forEach(id => { document.getElementById(id)?.classList.remove("auto-hint-flash"); });
     activeHintCells = [];
 }
 
 function triggerSearchAndShowHint() {
     if (isAnimating || isLocalGameOver()) return;
     clearAutoHints();
-    
-    // 遍歷全格尋找可移動解
+    let bestMove = null; let bestScore = 0;
     for(let r=0; r<SIZE; r++){
         for(let c=0; c<SIZE; c++){
             let dirs=[[0,1],[1,0]];
@@ -715,71 +528,69 @@ function triggerSearchAndShowHint() {
                 let nr=r+dr, nc=c+dc;
                 if(nr<SIZE && nc<SIZE){
                     [grid[r][c], grid[nr][nc]] = [grid[nr][nc], grid[r][c]];
-                    let canEliminate = hasMatch(grid);
-                    [grid[r][c], grid[nr][nc]] = [grid[nr][nc], grid[r][c]]; // 復原
-                    
-                    if(canEliminate) {
-                        let id1 = `cell-${r}-${c}`;
-                        let id2 = `cell-${nr}-${nc}`;
-                        let el1 = document.getElementById(id1);
-                        let el2 = document.getElementById(id2);
-                        if(el1 && el2) {
-                            el1.classList.add("auto-hint-flash");
-                            el2.classList.add("auto-hint-flash");
-                            activeHintCells.push(id1, id2);
-                            return; // 唯獨提示一組最優解
-                        }
-                    }
+                    let scoreEstimate = estimateMatchScore(grid);
+                    [grid[r][c], grid[nr][nc]] = [grid[nr][nc], grid[r][c]]; 
+                    if(scoreEstimate > bestScore){ bestScore = scoreEstimate; bestMove = {r, c, nr, nc}; }
                 }
             }
         }
     }
-}
-
-function resetUserInactivityTimer() {
-    userLastActiveTime = Date.now();
-    clearAutoHints();
-}
-
-// 定時巡檢長者是否卡死
-clearInterval(hintCheckInterval);
-hintCheckInterval = setInterval(() => {
-    if(Date.now() - userLastActiveTime > 5000) { // 💡 如果長者閒置超過 5 秒
-        triggerSearchAndShowHint(); // 觸發自動高亮提示
+    if(bestMove){
+        let id1 = `cell-${bestMove.r}-${bestMove.c}`, id2 = `cell-${bestMove.nr}-${bestMove.nc}`;
+        document.getElementById(id1)?.classList.add("auto-hint-flash");
+        document.getElementById(id2)?.classList.add("auto-hint-flash");
+        activeHintCells.push(id1, id2);
     }
-}, 1000);
+}
 
+// 🎯 核心修正：將此處橫向判斷死循環中的 r++ 修改為 c++，100% 杜絕執行緒卡死！
+function estimateMatchScore(g){
+    let count = 0;
+    for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE-2; c++){ if(g[r][c] && g[r][c] === g[r][c+1] && g[r][c] === g[r][c+2]) count += 3; }
+    }
+    for(let c=0; c<SIZE; c++){
+        for(let r=0; r<SIZE-2; r++){ if(g[r][c] && g[r][c] === g[r+1][c] && g[r][c] === g[r+2][c]) count += 3; }
+    }
+    return count;
+}
 
-let startCell = null, isSwapping = false;
+function resetUserInactivityTimer() { userLastActiveTime = Date.now(); clearAutoHints(); }
+clearInterval(hintCheckInterval);
+hintCheckInterval = setInterval(() => { if(Date.now() - userLastActiveTime > 5000) triggerSearchAndShowHint(); }, 1000);
+
 board.addEventListener("pointerdown", e => {
-    resetUserInactivityTimer();
-    if(isAnimating || isSwapping || isLocalGameOver()) return;
-    startCell = e.target.closest(".cell");
+    tryInitAudio(); resetUserInactivityTimer();
+    if(isAnimating || isLocalGameOver()) return;
+    last = e.target.closest(".cell");
 });
+
 board.addEventListener("pointermove", e => {
-    if(!startCell || isAnimating || isSwapping) return;
+    if(!last || isAnimating) return;
     let targetEl = document.elementFromPoint(e.clientX, e.clientY);
     let currentCell = targetEl ? targetEl.closest(".cell") : null;
-    if(!currentCell || startCell === currentCell) return;
+    if(!currentCell || last === currentCell) return;
 
-    let r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
+    let r1 = parseInt(last.dataset.r), c1 = parseInt(last.dataset.c);
     let r2 = parseInt(currentCell.dataset.r), c2 = parseInt(currentCell.dataset.c);
     
     if(Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1) {
-        isSwapping = true; startCell = null; 
+        isAnimating = true; last = null;
         executeUserMove(r1, c1, r2, c2);
     }
 });
 
 function executeUserMove(r1, c1, r2, c2) {
-    isAnimating = true;
     clearAutoHints();
     
     if(grid[r1][c1] === TORII || grid[r2][c2] === TORII) {
-        let matchTarget = (grid[r1][c1] === TORII) ? grid[r2][c2] : grid[r1][c1];
+        let toriiR = grid[r1][c1] === TORII ? r1 : r2;
+        let toriiC = grid[r1][c1] === TORII ? c1 : c2;
+        let targetColor = grid[r1][c1] === TORII ? grid[r2][c2] : grid[r1][c1];
+        
         [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
         render();
-        setTimeout(() => { triggerToriiClear(r1, c1, matchTarget); }, 150);
+        setTimeout(() => { triggerToriiClear(toriiR, toriiC, targetColor); }, 150);
         return;
     }
 
@@ -791,12 +602,9 @@ function executeUserMove(r1, c1, r2, c2) {
         let success = checkMatchesAndEliminate(r2, c2); 
         if(!success) {
             [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
-            safePlaySound('wrong'); 
-            isAnimating = false; isSwapping = false; last = null; render();
+            safePlaySound('wrong'); isAnimating = false; render();
         } else {
-            moves--;
-            document.getElementById("moves").innerText = moves;
-            last = null; isSwapping = false;
+            moves--; document.getElementById("moves").innerText = moves;
         }
     }, 200);
 }
@@ -805,23 +613,16 @@ function triggerToriiClear(toriiR, toriiC, targetColor) {
     let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
     toRemove[toriiR][toriiC] = true;
     
-    if(!targetColor || targetColor === CASTLE || targetColor === TORII) {
-        targetColor = currentLevelTypes[Math.floor(Math.random() * currentLevelTypes.length)];
-    }
-
-    for(let r=0; r<SIZE; r++) {
-        for(let c=0; c<SIZE; c++) {
-            if(grid[r][c] === targetColor) toRemove[r][c] = true;
+    if(targetColor && targetColor !== CASTLE && targetColor !== TORII) {
+        for(let r=0; r<SIZE; r++) {
+            for(let c=0; c<SIZE; c++) { if(grid[r][c] === targetColor) toRemove[r][c] = true; }
         }
     }
-    
     let targetCell = document.getElementById(`cell-${toriiR}-${toriiC}`);
-    showComboBonusEffect(targetCell, "⛩️ 鳥居結界！同色全消");
-    safePlaySound('torii_boom'); 
+    showBonusEffect(targetCell, "⛩️ 鳥居全消！", true);
+    safePlaySound('boom');
     executeElimination(toRemove);
-    moves--;
-    document.getElementById("moves").innerText = moves;
-    isSwapping = false;
+    moves--; document.getElementById("moves").innerText = moves;
 }
 
 function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
@@ -830,14 +631,11 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
     let spawnSpecialList = [];
     let hasCastleTriggered = false;
 
-    // 1. 橫向
     for(let r=0; r<SIZE; r++){
-        let matchLen = 1;
-        let matchStart = 0;
+        let matchLen = 1; let matchStart = 0;
         for(let c=1; c<SIZE; c++){
-            if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) {
-                matchLen++;
-            } else {
+            if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) matchLen++;
+            else {
                 if(matchLen >= 3) {
                     hasMatchFound = true;
                     let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
@@ -845,8 +643,7 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
                     for(let i=matchStart; i<c; i++) toRemove[r][i] = true;
                     if(type) spawnSpecialList.push({r: r, c: spawnC, type: type});
                 }
-                matchLen = 1;
-                matchStart = c;
+                matchLen = 1; matchStart = c;
             }
         }
         if(matchLen >= 3) {
@@ -858,14 +655,11 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
         }
     }
 
-    // 2. 縱向
     for(let c=0; c<SIZE; c++){
-        let matchLen = 1;
-        let matchStart = 0;
+        let matchLen = 1; let matchStart = 0;
         for(let r=1; r<SIZE; r++){
-            if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) {
-                matchLen++;
-            } else {
+            if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) matchLen++;
+            else {
                 if(matchLen >= 3) {
                     hasMatchFound = true;
                     let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
@@ -873,8 +667,7 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
                     for(let i=matchStart; i<r; i++) toRemove[i][c] = true;
                     if(type) spawnSpecialList.push({r: spawnR, c: c, type: type});
                 }
-                matchLen = 1;
-                matchStart = r;
+                matchLen = 1; matchStart = r;
             }
         }
         if(matchLen >= 3) {
@@ -886,7 +679,6 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
         }
     }
 
-    // 3. 🏯 江戶古城 十字鏈式爆破
     let checkedSpecial = true;
     while(checkedSpecial) {
         checkedSpecial = false;
@@ -904,11 +696,7 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
     }
 
     if(hasMatchFound){
-        if(hasCastleTriggered) {
-            safePlaySound('castle_boom');
-        } else {
-            safePlaySound('match');
-        }
+        if(hasCastleTriggered) { safePlaySound('boom'); } else { safePlaySound('match'); }
         executeElimination(toRemove, spawnSpecialList);
         return true;
     }
@@ -916,18 +704,14 @@ function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
 }
 
 function executeElimination(toRemove, spawnSpecialList = []) {
-    let removedCount = 0;
-    let targetCellEl = null;
-
+    let removedCount = 0; let targetCellEl = null;
     for(let r=0; r<SIZE; r++){
         for(let c=0; c<SIZE; c++){
             if(toRemove[r][c] && grid[r][c]) {
-                explodeEffect(r, c);
                 if(!targetCellEl) targetCellEl = document.getElementById(`cell-${r}-${c}`);
                 if(grid[r][c] === targetKey1 && mission[targetKey1] > 0) mission[targetKey1]--;
                 if(grid[r][c] === targetKey2 && mission[targetKey2] > 0) mission[targetKey2]--;
-                grid[r][c] = null; 
-                removedCount++;
+                grid[r][c] = null; removedCount++;
             }
         }
     }
@@ -935,186 +719,122 @@ function executeElimination(toRemove, spawnSpecialList = []) {
     spawnSpecialList.forEach(item => {
         grid[item.r][item.c] = item.type;
         let cellSpan = document.getElementById(`cell-${item.r}-${item.c}`);
-        if(item.type === CASTLE) { showComboBonusEffect(cellSpan, "🏯 獲得古城!"); safePlaySound('time_bonus'); }
-        if(item.type === TORII) { showComboBonusEffect(cellSpan, "⛩️ 獲得鳥居!"); safePlaySound('time_bonus'); }
+        if(item.type === CASTLE) showBonusEffect(cellSpan, "🏯 古城生成", true);
+        if(item.type === TORII) showBonusEffect(cellSpan, "⛩️ 鳥居生成", true);
     });
 
-    let addedTime = 2.0; 
-    if(spawnSpecialList.length > 0) addedTime = 5.0; 
+    let addedTime = spawnSpecialList.length > 0 ? 5.0 : 2.0; 
     timeLeft = Math.min(maxTime, timeLeft + addedTime); 
-    if(targetCellEl) {
-        showTimeBonusEffect(targetCellEl, addedTime);
-        if(currentComboCount > 1) safePlaySound('time_bonus');
-    }
+    if(targetCellEl) showBonusEffect(targetCellEl, `+${addedTime.toFixed(0)}s`);
 
-    // 3️⃣ 優化 Combo 計分公式：爽快有感且能精準平衡得分，避免爆炸式超標破壞平衡
     score += removedCount * (80 + currentComboCount * 40);
-    document.getElementById("score").innerText = score;
-    setTimeout(drop, 250);
-}
+    
+    let scoreEl = document.getElementById("score");
+    scoreEl.innerText = score;
+    scoreEl.style.transform = "scale(1.3)";
+    setTimeout(() => scoreEl.style.transform = "scale(1)", 150);
 
-function autoCheckLoop() {
-    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
-    let hasMatchFound = false;
-    for(let r=0; r<SIZE; r++){
-      let cnt = 1;
-      for(let c=1; c<SIZE; c++){
-        if(grid[r][c] && grid[r][c] === grid[r][c-1]) cnt++;
-        else { if(cnt >= 3) hasMatchFound=true; cnt = 1; }
-      }
-      if(cnt >= 3) hasMatchFound=true;
-    }
-    if(hasMatchFound) {
-        currentComboCount++; 
-        checkMatchesAndEliminate();
-    } else {
-        isAnimating = false; 
-        checkGameStatus(false);
-        if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) {
-            grid = generateValidGrid(); render();
-        }
-    }
+    setTimeout(drop, 250);
 }
 
 function drop(){
     let len = currentLevelTypes.length;
     for(let c=0; c<SIZE; c++) {
         let pointer = SIZE - 1;
-        for(let r=SIZE-1; r>=0; r--) {
-            if(grid[r][c] !== null) { grid[pointer][c] = grid[r][c]; pointer--; }
-        }
-        while(pointer >= 0) {
-            grid[pointer][c] = currentLevelTypes[Math.floor(Math.random() * len)];
-            pointer--;
-        }
+        for(let r=SIZE-1; r>=0; r--) { if(grid[r][c] !== null) { grid[pointer][c] = grid[r][c]; pointer--; } }
+        while(pointer >= 0) { grid[pointer][c] = currentLevelTypes[Math.floor(Math.random() * len)]; pointer--; }
     }
     render();
-    
     setTimeout(() => {
         let matched = checkMatchesAndEliminate();
-        if(matched) {
+        if(matched) { 
             currentComboCount++; 
-        } else {
-            isAnimating = false; 
-            checkGameStatus(false);
-            if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) {
-                grid = generateValidGrid(); render();
-            }
+            renderMission(); 
         }
+        else { isAnimating = false; checkGameStatus(false); if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) { grid = generateValidGrid(); render(); } }
     }, 200);
 }
 
 function renderMission() {
-    const missionEl = document.getElementById("mission");
-    if(!targetKey1 || !targetKey2) return;
-    missionEl.innerHTML = `
-        🎯 目標：
-        <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey1].url}')">${MASTER_ITEMS[targetKey1].text}</span> 剩餘: ${mission[targetKey1]} ｜ 
-        <span class="mission-icon" style="background-image:url('${MASTER_ITEMS[targetKey2].url}')">${MASTER_ITEMS[targetKey2].text}</span> 剩餘: ${mission[targetKey2]}
-    `;
+    const missionEl = document.getElementById("mission"); if(!targetKey1 || !targetKey2) return;
+    
+    missionEl.innerHTML = `<div>🔥 廚房急單：${MASTER_ITEMS[targetKey1].text} × ${mission[targetKey1]} ｜ ${MASTER_ITEMS[targetKey2].text} × ${mission[targetKey2]}</div>`;
+    
+    if(currentComboCount > 1) {
+        comboBadge.innerText = `🔥 COMBO x${currentComboCount}`;
+        comboBadge.classList.add("combo-active");
+    } else {
+        comboBadge.classList.remove("combo-active");
+    }
 }
 
 function checkGameStatus(timeOut = false) {
     if (mission[targetKey1] <= 0 && mission[targetKey2] <= 0) {
         clearInterval(timerInterval); currentLevel++; setupLevel(); return;
     } 
-    if (moves <= 0 || timeOut) {
-        clearInterval(timerInterval); stopBGM();
-        document.getElementById("gameOverModal").style.display = "flex";
-        uploadScoreToFirebase();
+    if (moves <= 0 || timeOut) { 
+        clearInterval(timerInterval); stopBGM(); 
+        document.getElementById("go-reason-text").innerText = timeOut ? "⏰ 出餐超時！客人走光了…" : "💸 步數耗盡！差一點就完成！";
+        document.getElementById("go-level-val").innerText = `第 ${currentLevel} 關`;
+        document.getElementById("go-score-val").innerText = score;
+        document.getElementById("gameOverModal").style.display = "flex"; 
     }
 }
 
-function restartWholeGame() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; document.getElementById("score").innerText = score; setupLevel(); }
-function returnToGameHome() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; setupLevel(); }
-
-function updateRescueUI() {
-    rescueIconsEl.innerHTML = "";
-    if(rescueMovesLeft <= 0) {
-        rescueIconsEl.innerText = "次數用盡 ❌";
-        rescueIconsEl.style.color = "#e74c3c";
-        ambulanceBtn.disabled = true;
-        return;
-    }
-    
-    for(let i=0; i<rescueMovesLeft; i++) {
-        let span = document.createElement("span");
-        span.className = "rescue-count-icon";
-        span.style.position = "relative";
-        span.innerHTML = `<span style="font-size:20px; font-weight:normal; line-height:24px;">🎋</span>`;
-        
-        let imgTest = new Image();
-        imgTest.src = 'https://img.icons8.com/color/96/tanabata-tree.png';
-        imgTest.onload = function() {
-            span.style.backgroundImage = "url('https://img.icons8.com/color/96/tanabata-tree.png')";
-            span.innerHTML = ""; 
-        };
-        rescueIconsEl.appendChild(span);
-    }
-}
-
-function useAmbulanceRescue() {
-    resetUserInactivityTimer();
-    if(rescueMovesLeft <= 0 || isAnimating || isLocalGameOver()) return;
-    rescueMovesLeft--; 
-    updateRescueUI(); 
-    safePlaySound('torii_boom'); 
-    grid = generateValidGrid(); 
-    render();
-}
-
-function setupLevel() {
-    let poolSize = currentLevel >= 15 ? 9 : (currentLevel >= 6 ? 7 : 5);
-    let allKeys = Object.keys(MASTER_ITEMS); 
-    let cleanPool = allKeys.filter(k => k !== CASTLE && k !== TORII);
-    cleanPool.sort(() => 0.5 - Math.random()); 
-    currentLevelTypes = cleanPool.slice(0, poolSize); 
-    
-    targetKey1 = currentLevelTypes[0]; targetKey2 = currentLevelTypes[1];
-    let targetCount = Math.min(30, 8 + Math.floor(currentLevel / 2));
-    mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
-    
-    moves = Math.min(50, 35 + Math.floor(currentLevel / 5));
+function watchAdRevive() {
+    alert("🎬 正在載入廣告影片...\n【廣告播放完畢】成功獲得健康愛心！");
+    document.getElementById("gameOverModal").style.display = "none";
+    moves = 10; 
+    timeLeft = 30; 
     document.getElementById("moves").innerText = moves;
-    document.getElementById("current-level").innerText = currentLevel;
-    
-    isAnimating = false; isSwapping = false; last = null;
-    rescueMovesLeft = 3; 
-    ambulanceBtn.disabled = false;
-    updateRescueUI();
-    resetUserInactivityTimer();
-    
-    grid = generateValidGrid(); render(); startTimer(); 
-    tryInitAudio();
+    startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
-function uploadScoreToFirebase() {
-    let name = prompt("🍣 請輸入您的長者暱稱：", "精明老饕");
-    if (name === null) name = "無名傳奇"; name = name.trim() === "" ? "精明老饕" : name;
-    database.ref("leaderboard").push({ name: name, level: currentLevel, score: score, timestamp: Date.now() });
+function restartWholeGame() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; document.getElementById("score").innerText = score; setupLevel(); }
+function returnToGameHome() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; document.getElementById("score").innerText = score; setupLevel(); }
+
+function updateRescueUI() {
+    rescueIconsEl.innerText = `剩 ${rescueMovesLeft} 次`;
+    if(rescueMovesLeft <= 0) { ambulanceBtn.disabled = true; }
 }
 
-function showLeaderboardPopup() { 
-    const tbody = document.getElementById("leaderboard-body"); tbody.innerHTML = `<tr><td colspan="4">數據加載中...</td></tr>`;
-    document.getElementById("rankModal").style.display = "flex";
-    database.ref("leaderboard").orderByChild("score").limitToLast(10).once("value", snapshot => {
-        let list = []; snapshot.forEach(child => { list.push(child.val()); }); 
-        
-        // 2️⃣ 排行榜防混亂雙重保險排序邏輯優化
-        list.sort((a,b) => b.score - a.score); 
-        
-        tbody.innerHTML = "";
-        list.forEach((player, index) => {
-            let tr = document.createElement("tr");
-            tr.innerHTML = `<td>${index + 1}</td><td>${player.name}</td><td>第 ${player.level} 關</td><td style="color:#d35400;">${player.score}</td>`;
-            tbody.appendChild(tr);
-        });
-    });
+function useAmbulanceRescue() {
+    resetUserInactivityTimer(); if(rescueMovesLeft <= 0 || isAnimating || isLocalGameOver()) return;
+    rescueMovesLeft--; updateRescueUI(); grid = generateValidGrid(); render();
+    setTimeout(() => { triggerSearchAndShowHint(); }, 300);
 }
-function closeLeaderboardPopup() { document.getElementById("rankModal").style.display = "none"; }
 
-setupLevel();
+function setupLevel() {
+    let poolSize = currentLevel >= 15 ? 8 : (currentLevel >= 6 ? 6 : 4);
+    
+    let allKeys = Object.keys(MASTER_ITEMS).filter(k => k !== CASTLE && k !== TORII);
+    allKeys.sort(() => 0.5 - Math.random()); 
+    currentLevelTypes = allKeys.slice(0, poolSize); 
+    
+    targetKey1 = currentLevelTypes[0]; 
+    targetKey2 = currentLevelTypes[1];
+    let targetCount = Math.min(30, 8 + Math.floor(currentLevel / 2)); 
+    mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
+    
+    moves = Math.min(50, 35 + Math.floor(currentLevel / 5)); 
+    document.getElementById("moves").innerText = moves; 
+    document.getElementById("current-level").innerText = currentLevel;
+    
+    isAnimating = false; last = null; rescueMovesLeft = 3; ambulanceBtn.disabled = false; updateRescueUI(); resetUserInactivityTimer();
+    grid = generateValidGrid(); 
+    render(); 
+    startTimer(); 
+    if(audioCtx && !musicUserToggled) startBGM();
+}
+
+window.onload = function() { 
+    if(!localStorage.getItem("dailyReward") || Date.now() - localStorage.getItem("dailyReward") > 24 * 60 * 60 * 1000){
+        alert("🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已自動存入錢包。");
+        localStorage.setItem("dailyReward", Date.now());
+    }
+    setupLevel(); 
+};
 </script>
 </body>
 </html>
