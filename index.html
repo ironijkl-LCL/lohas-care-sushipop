@@ -58,18 +58,23 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin: 4px 0;
-    gap: 6px;
+    gap: 4px;
 }
 
 .stat-box {
     background: #f7f7f7;
     border-radius: 12px;
-    padding: 6px;
-    width: 23%;
-    font-size: 12px;
+    padding: 6px 2px;
+    width: 19%;
+    font-size: 11px;
     font-weight: bold;
     color: #4a3728;
     box-sizing: border-box;
+    line-height: 1.2;
+}
+
+.stat-box span {
+    color: #ff6b6b;
 }
 
 #score {
@@ -115,7 +120,7 @@ h1 {
     box-sizing: border-box;
 }
 
-/* 🎯 Combo 完全獨立圖層絕對定位，物理空間為 0 像素，徹底消滅變大走位 */
+/* 🎯 Combo 完全獨立圖層絕對定位，物理空間為 0 像素 */
 .combo-floating-badge {
     position: absolute;
     top: 72px; 
@@ -304,7 +309,9 @@ button.menu-btn {
         <div class="stat-box">⏳ 時間<br><span id="timer-text">90s</span></div>
         <div class="stat-box">👣 步數<br><span id="moves">35</span></div>
         <div class="stat-box">🏆 得分<br><span id="score">0</span></div>
-        <div class="stat-box" style="cursor:pointer;" onclick="toggleMusic()">🎵 音樂<br><span id="music-status">開啟</span></div>
+        <!-- 🪙 1️⃣ 新增：金幣 progression 顯示卡片 -->
+        <div class="stat-box">🪙 金幣<br><span id="coin">0</span></div>
+        <div class="stat-box" style="cursor:pointer; width:16%; font-size:10px;" onclick="toggleMusic()">🎵音樂<br><span id="music-status" style="color:#2ecc71;">開啟</span></div>
     </div>
 
     <div class="timer-container">
@@ -328,11 +335,16 @@ button.menu-btn {
             <h3 style="margin-top:0; color:#ff6b6b; text-align:center;">💥 訂單爆單失敗！</h3>
             <p id="go-reason-text">💸 步數耗盡！差一點就完成！</p>
             <p>卡關：<span id="go-level-val">第 1 關</span></p>
+            <p class="highlight">連勝紀錄：<span id="go-streak-val">0</span> 🌟</p>
             <p class="highlight">最終分數：<span id="go-score-val">0</span> 分</p>
         </div>
         
+        <!-- 🪙 2️⃣ 新增：金幣復活變現點按鈕 -->
+        <button class="menu-btn" style="background:#f1c40f; color:#4a3728;" onclick="reviveWithCoins()">
+            🪙 30 金幣復活 (免看廣告)
+        </button>
         <button class="menu-btn" style="background:#2ecc71; color:white;" onclick="watchAdRevive()">
-            ❤️ 看廣告繼續一次 (差一點點！)
+            ❤️ 看廣告繼續一次
         </button>
         <button class="menu-btn retry" onclick="restartWholeGame()">🔄 再挑戰一次（差一點就過！）</button>
         <button class="menu-btn home" onclick="returnToGameHome()">🏠 返回首頁</button>
@@ -344,6 +356,7 @@ const SIZE = 8;
 const CASTLE = "japanese_castle";
 const TORII = "torii_gate";
 
+// 🎨 Skin系統準備：主代碼底層直接調用高清系統 Emoji，原生發光視覺
 const MASTER_ITEMS = {
     "japanese_castle": { text: "🏯" },
     "torii_gate": { text: "⛩️" },
@@ -363,7 +376,8 @@ let currentLevelTypes = [], grid = [], score = 0, last = null, isAnimating = fal
 let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = null, musicUserToggled = false, currentComboCount = 1; 
 let rescueMovesLeft = 3; 
 let mission = {}, targetKey1 = "", targetKey2 = "";
-let reviveUsed = false; // ❤️ 3️⃣ 續命限制變數
+let reviveUsed = false; 
+let winStreak = 0; // 🚀 8️⃣ 連勝獎勵計數器
 
 let userLastActiveTime = Date.now();
 let hintCheckInterval = null;
@@ -378,13 +392,19 @@ const comboBadge = document.getElementById("combo-badge");
 
 function isLocalGameOver() { return moves <= 0 || timeLeft <= 0; }
 
-// 🪙 6️⃣ 金幣進度儲存系統
+// 🪙 1️⃣ & 6️⃣ 金幣帳戶進度與實時 UI 更新
 let coins = parseInt(localStorage.getItem("coins") || "0");
 function updateCoins(){
     localStorage.setItem("coins", coins);
+    document.getElementById("coin").innerText = coins;
 }
 
-// ===== 🔊 音訊引擎 =====
+// ⚡ 6️⃣ 獨立手機微震動回饋防線
+function vibrate(ms=30){
+    if(navigator.vibrate) navigator.vibrate(ms);
+}
+
+// ===== 🔊 聲音引擎（音效大幅強化優化） =====
 let audioCtx = null, bgmTimer = null, bgmStep = 0;
 const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
@@ -402,7 +422,7 @@ function startBGM() {
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine';
             osc.frequency.setValueAtTime(EASON_MELODY[bgmStep % EASON_MELODY.length], audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
             osc.start(); osc.stop(audioCtx.currentTime + 0.22); bgmStep++;
         } catch(e){}
@@ -418,16 +438,20 @@ function safePlaySound(type) {
         const now = audioCtx.currentTime;
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         if (type === 'match') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25 * (1 + (currentComboCount - 1) * 0.1), now);
-            gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            // 🎼 消除音效優化：音調隨 Combo 階梯遞增，更加清脆、多巴胺爆棚
+            osc.type = 'sine'; 
+            let pitchFreq = 523.25 * (1 + (currentComboCount - 1) * 0.15);
+            osc.frequency.setValueAtTime(pitchFreq, now);
+            gain.gain.setValueAtTime(0.12, now); 
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
         } else if (type === 'boom') {
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(40, now + 0.4);
-            gain.gain.setValueAtTime(0.25, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(160, now); osc.frequency.linearRampToValueAtTime(35, now + 0.45);
+            gain.gain.setValueAtTime(0.28, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
         } else if (type === 'wrong') {
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now);
-            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(110, now);
+            gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
         }
-        osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(now + 0.4);
+        osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(now + 0.45);
     } catch(e){}
 }
 
@@ -564,7 +588,14 @@ function estimateMatchScore(g){
 
 function resetUserInactivityTimer() { userLastActiveTime = Date.now(); clearAutoHints(); }
 clearInterval(hintCheckInterval);
-hintCheckInterval = setInterval(() => { if(Date.now() - userLastActiveTime > 5000) triggerSearchAndShowHint(); }, 1000);
+hintCheckInterval = setInterval(() => { 
+    // 🧠 3️⃣ Auto Hint 概率與時長優化防無腦（延長至8秒，60%機率出現提示）
+    if(Date.now() - userLastActiveTime > 8000) {
+        if(Math.random() < 0.6) {
+            triggerSearchAndShowHint(); 
+        }
+    }
+}, 1000);
 
 board.addEventListener("pointerdown", e => {
     tryInitAudio(); resetUserInactivityTimer();
@@ -723,6 +754,9 @@ function executeElimination(toRemove, spawnSpecialList = []) {
         }
     }
 
+    // ⚡ 6️⃣ 震動回饋升級（成功消除微震 20ms，大連鎖爆擊震 60ms）
+    if(removedCount >= 4) { vibrate(60); } else if(removedCount > 0) { vibrate(20); }
+
     spawnSpecialList.forEach(item => {
         grid[item.r][item.c] = item.type;
         let cellSpan = document.getElementById(`cell-${item.r}-${item.c}`);
@@ -734,12 +768,13 @@ function executeElimination(toRemove, spawnSpecialList = []) {
     timeLeft = Math.min(maxTime, timeLeft + addedTime); 
     if(targetCellEl) showBonusEffect(targetCellEl, `+${addedTime.toFixed(0)}s`);
 
-    // 🔥 2️⃣ 增加「爆擊分數字」核心邏輯
+    // 💥 2️⃣ 新增：大消除爆擊分數字彈跳特效
     if(removedCount >= 4 && targetCellEl){
-        showBonusEffect(targetCellEl, `💥 +${removedCount * 80}`, true);
+        showBonusEffect(targetCellEl, `💥 +${removedCount * 80 * currentComboCount}`, true);
     }
 
-    score += removedCount * (80 + currentComboCount * 40);
+    // 💥 4️⃣ Combo 上癮公式重改：計分大爆炸
+    score += removedCount * 80 * currentComboCount;
     
     let scoreEl = document.getElementById("score");
     scoreEl.innerText = score;
@@ -767,7 +802,7 @@ function drop(){
     }, 200);
 }
 
-// ✨ 1️⃣ COMBO「消失延遲」優化
+// ✅ 1️⃣ 消失延遲優化：留 0.8 秒連擊多巴胺爽感
 function renderMission() {
     const missionEl = document.getElementById("mission"); if(!targetKey1 || !targetKey2) return;
     
@@ -780,18 +815,27 @@ function renderMission() {
         clearTimeout(comboBadge.hideTimer);
         comboBadge.hideTimer = setTimeout(() => {
             comboBadge.classList.remove("combo-active");
-        }, 800); // 👈 完美留 0.8 秒多巴胺爽感
+        }, 800); 
     }
 }
 
 function checkGameStatus(timeOut = false) {
     if (mission[targetKey1] <= 0 && mission[targetKey2] <= 0) {
-        clearInterval(timerInterval); currentLevel++; setupLevel(); return;
+        clearInterval(timerInterval); 
+        currentLevel++; 
+        winStreak++; // 🚀 連勝累加
+        
+        // 🚀 8️⃣ 營收級每日任務獎勵判定
+        if(currentLevel === 4) { coins += 20; alert("🏆 任務達成：成功通過3關！獲得 +20 金幣！🪙"); updateCoins(); }
+        if(currentComboCount >= 5) { coins += 30; alert("🔥 任務達成：達成 5 Combo 連擊！獲得 +30 金幣！🪙"); updateCoins(); }
+        
+        setupLevel(); 
+        return;
     } 
     if (moves <= 0 || timeOut) { 
         clearInterval(timerInterval); stopBGM(); 
         
-        // 🎯 4️⃣ 「差一點提示」極致營收拉扯升級
+        // 🎯 4️⃣ 「差一點提示」營收心理學拉扯升級
         let remaining = (mission[targetKey1] > 0 ? mission[targetKey1] : 0) + (mission[targetKey2] > 0 ? mission[targetKey2] : 0);
         let isClose = remaining <= 4;
         
@@ -800,15 +844,39 @@ function checkGameStatus(timeOut = false) {
             (isClose ? "🤏 只差最後幾份！再挑戰一次一定過！" : "💸 今日策略失誤！再挑戰一次！");
             
         document.getElementById("go-level-val").innerText = `第 ${currentLevel} 關`;
+        document.getElementById("go-streak-val").innerText = winStreak;
         document.getElementById("go-score-val").innerText = score;
+        
+        winStreak = 0; // 輸掉時連勝歸零
         document.getElementById("gameOverModal").style.display = "flex"; 
     }
 }
 
-// ❤️ 3️⃣ 續命機制升級（黃金單局唯一限制）
+// 🪙 2️⃣ 新增：金幣復活機制（扣除 30 金幣免看廣告）
+function reviveWithCoins(){
+    if(coins < 30){
+        alert("⚠️ 金幣不足！先通過挑戰賺取金幣，或者選擇看廣告復活吧！");
+        return;
+    }
+    if(reviveUsed){
+        alert("⚠️ 本局已使用過復活！每場只能續命一次！");
+        return;
+    }
+    coins -= 30;
+    reviveUsed = true;
+    updateCoins();
+    
+    document.getElementById("gameOverModal").style.display = "none";
+    moves = 10;
+    timeLeft = 30;
+    document.getElementById("moves").innerText = moves;
+    startTimer();
+    if(audioCtx && !musicUserToggled) startBGM();
+}
+
 function watchAdRevive() {
     if(reviveUsed){
-        alert("⚠️ 本局已使用過復活！每場只能使用一次，重新挑戰吧！");
+        alert("⚠️ 本局已使用過復活！");
         return;
     }
     reviveUsed = true;
@@ -836,7 +904,7 @@ function useAmbulanceRescue() {
 }
 
 function setupLevel() {
-    reviveUsed = false; // ❤️ 每局開始前重置續命限制
+    reviveUsed = false; 
     let poolSize = currentLevel >= 15 ? 8 : (currentLevel >= 6 ? 6 : 4);
     
     let allKeys = Object.keys(MASTER_ITEMS).filter(k => k !== CASTLE && k !== TORII);
@@ -846,8 +914,8 @@ function setupLevel() {
     targetKey1 = currentLevelTypes[0]; 
     targetKey2 = currentLevelTypes[1];
     
-    // 📈 5️⃣ 「難度節奏爆改」商業數值曲線
-    let targetCount = Math.min(60, 6 + Math.floor(currentLevel * 1.8)); 
+    // 🎯 5️⃣ 「難度節奏爆改」平滑難度曲線調整
+    let targetCount = Math.min(60, 6 + Math.floor(currentLevel * 1.5)); 
     mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
     
     moves = Math.min(50, 35 + Math.floor(currentLevel / 5)); 
@@ -858,15 +926,22 @@ function setupLevel() {
     grid = generateValidGrid(); 
     render(); 
     startTimer(); 
+    updateCoins(); // 實時刷新金幣顯示
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
 window.onload = function() { 
-    // 🎁 6️⃣ 每日獎勵 → 變「帳戶進度系統」
+    // 🧠 7️⃣ 缺少「教學引導」機制
+    if(!localStorage.getItem("tutorial")){
+        alert("🧠 歡迎光臨活腦壽司坊！\n👉 滑動相鄰壽司進行位置交換，連成 3 個或以上相同圖案即可消除！\n鎖定急單目標，一起來活化大腦吧！");
+        localStorage.setItem("tutorial", "1");
+    }
+
+    // 🎁 每日獎勵登入
     if(!localStorage.getItem("dailyReward") || Date.now() - localStorage.getItem("dailyReward") > 24 * 60 * 60 * 1000){
         coins += 50;
         updateCoins();
-        alert(`🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已自動存入帳戶。\\n目前金幣總數：${coins} 🪙`);
+        alert(`🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已存入帳戶。\n目前金幣總數：${coins} 🪙`);
         localStorage.setItem("dailyReward", Date.now());
     }
     setupLevel(); 
