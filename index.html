@@ -26,7 +26,7 @@ body {
     transition: background 0.1s ease;
 }
 
-/* 🎯 終極鎖死排版防線：固定卡片與棋盤寬高，任何情況下都絕不拉伸變形 */
+/* 🎯 終極鎖死排版防線：固定卡片與棋盤寬高 */
 .container {
     width: 380px;
     height: 600px;
@@ -63,10 +63,13 @@ h1 {
     padding: 2px 6px;
     background: #e0e0e0;
     border-radius: 6px;
+    transition: all 0.3s ease;
 }
 .map-node.active {
     background: #ff6b6b;
     color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(255,107,107,0.4);
 }
 
 .stats {
@@ -135,7 +138,7 @@ h1 {
     box-sizing: border-box;
 }
 
-/* 🎯 Combo 完全獨立圖層絕對定位，物理空間為 0 像素 */
+/* 🎯 Combo 完全獨立圖層絕對定位 */
 .combo-floating-badge {
     position: absolute;
     top: 92px; 
@@ -214,7 +217,7 @@ button:active {
     justify-content: center;
 }
 
-/* 🎯 棋盤高寬嚴格鎖死為 350px 完美正方形，純白底色讓任何裂縫橫線永久隱形 */
+/* 🎯 棋盤高寬嚴格鎖死為 350px 完美正方形 */
 .board {
     display: grid;
     grid-template-columns: repeat(8, 1fr); 
@@ -260,7 +263,7 @@ button:active {
     font-size: 26px;
     line-height: 1;
     pointer-events: none;
-    transition: transform 0.2s ease;
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .shimmer-cell {
@@ -321,10 +324,11 @@ button.menu-btn {
     animation: floatUpUp 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 .time-bonus-text { color: #2ecc71; font-size: 18px; text-shadow: 1px 1px 0px #fff; }
-.combo-bonus-text { color: #e67e22; font-size: 19px; text-shadow: 1px 1px 0px #fff; }
+.combo-bonus-text { color: #e67e22; font-size: 22px; text-shadow: 1px 1px 0px #fff; text-align: center; width: 120px; }
 @keyframes floatUpUp {
-    0% { transform: translate(0, 0); opacity: 1; }
-    100% { transform: translate(0, -35px); opacity: 0; }
+    0% { transform: translate(0, 0) scale(0.8); opacity: 1; }
+    50% { transform: translate(0, -15px) scale(1.1); opacity: 1; }
+    100% { transform: translate(0, -45px) scale(0.9); opacity: 0; }
 }
 </style>
 </head>
@@ -505,14 +509,22 @@ function startTimer() {
 }
 
 function showBonusEffect(cell, text, isCombo = false) {
-    if (!cell) return;
-    const rect = cell.getBoundingClientRect();
     let bonusText = document.createElement("div");
     bonusText.className = isCombo ? "combo-bonus-text" : "time-bonus-text"; 
     bonusText.innerText = text;
-    bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 20) + "px";
-    bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 15) + "px";
-    document.body.appendChild(bonusText); setTimeout(() => bonusText.remove(), 800);
+
+    if (cell) {
+        const rect = cell.getBoundingClientRect();
+        bonusText.style.left = (rect.left + window.scrollX + cell.offsetWidth / 2 - 20) + "px";
+        bonusText.style.top = (rect.top + window.scrollY + cell.offsetHeight / 2 - 15) + "px";
+    } else {
+        // 全域漂浮居中提示 (例如 Combo 大量飆分時)
+        bonusText.style.left = "calc(50% - 60px)";
+        bonusText.style.top = "40%";
+    }
+    
+    document.body.appendChild(bonusText); 
+    setTimeout(() => bonusText.remove(), 800);
 }
 
 function create(){
@@ -739,7 +751,12 @@ function executeElimination(toRemove) {
         }
     }
 
-    if(removedCount >= 4) { 
+    // ✅ 優化 3：爆擊手感升級！大於等於 4 連消時全盤發動波浪回彈縮放
+    if(removedCount >= 4){
+        document.querySelectorAll(".disk-emoji").forEach(e => {
+            e.style.transform = "scale(1.25)";
+            setTimeout(() => { e.style.transform = "scale(1)"; }, 120);
+        });
         vibrate(20 * currentComboCount); 
         document.body.style.background = "#fff3cd";
         setTimeout(() => { document.body.style.background = ""; }, 100);
@@ -802,6 +819,11 @@ function renderMission() {
         comboBadge.innerText = `🔥 COMBO x${currentComboCount}`;
         comboBadge.classList.add("combo-active");
         
+        // ✅ 優化 4：飆分連擊文字大特寫提示
+        if(currentComboCount === 3) showBonusEffect(null, "🔥 GOOD!", true);
+        if(currentComboCount === 4) showBonusEffect(null, "✨ GREAT!", true);
+        if(currentComboCount >= 5) showBonusEffect(null, "👑 AMAZING!", true);
+
         clearTimeout(comboBadge.hideTimer);
         comboBadge.hideTimer = setTimeout(() => {
             comboBadge.classList.remove("combo-active");
@@ -858,13 +880,18 @@ function checkGameStatus(timeOut = false) {
     }
 }
 
+// ✅ 優化 1：Almost Win 復活鎖死防呆，重構盤面必定有解
 function useAlmostWinBoost(){
     if(coins < 10) { alert("⚠️ 金幣不足 10 枚！"); return; }
     coins -= 10;
     updateCoins();
+    
+    grid = generateValidGrid(); // 💥 強制洗出可用步數棋盤
     document.getElementById("gameOverModal").style.display = "none";
     moves = 5; timeLeft = 10;
     document.getElementById("moves").innerText = moves;
+    
+    render(); 
     startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
 }
@@ -906,20 +933,31 @@ function useMegaBomb() {
     executeElimination(toRemove);
 }
 
+// ✅ 同步優化其他復活途徑防死局
 function reviveWithCoins(){
     if(coins < 30){ alert("⚠️ 金幣不足！"); return; }
     if(reviveUsed){ alert("⚠️ 本局已使用過復活！"); return; }
     coins -= 30; reviveUsed = true; updateCoins();
+    
+    grid = generateValidGrid();
     document.getElementById("gameOverModal").style.display = "none";
-    moves = 6; timeLeft = 20; document.getElementById("moves").innerText = moves; startTimer();
+    moves = 6; timeLeft = 20; document.getElementById("moves").innerText = moves; 
+    
+    render();
+    startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
 function watchAdRevive() {
     if(reviveUsed){ alert("⚠️ 本局已使用過復活！"); return; }
     reviveUsed = true; alert("🎬 廣告播放完畢！");
+    
+    grid = generateValidGrid();
     document.getElementById("gameOverModal").style.display = "none";
-    moves = 6; timeLeft = 20; document.getElementById("moves").innerText = moves; startTimer();
+    moves = 6; timeLeft = 20; document.getElementById("moves").innerText = moves; 
+    
+    render();
+    startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
 }
 
@@ -935,6 +973,16 @@ function useAmbulanceRescue() {
     resetUserInactivityTimer(); if(rescueMovesLeft <= 0 || isAnimating || isLocalGameOver()) return;
     rescueMovesLeft--; updateRescueUI(); grid = generateValidGrid(); render();
     setTimeout(() => { triggerSearchAndShowHint(); }, 300);
+}
+
+// ✅ 優化 2：重構地圖 UI 刷新，動態調整 active 狀態，讓玩家感知到進度推進
+function updateMapUI() {
+    let nodes = ["node-curr", "node-next1", "node-next2", "node-next3"];
+    nodes.forEach(id => {
+        document.getElementById(id).classList.remove("active");
+    });
+    // 永遠鎖定當前關卡高亮
+    document.getElementById("node-curr").classList.add("active");
 }
 
 function setupLevel() {
@@ -955,10 +1003,13 @@ function setupLevel() {
     moves = Math.min(50, 35 + Math.floor(currentLevel / 5)); 
     document.getElementById("moves").innerText = moves; 
     
+    // 動態修改進度節點內的關卡字樣
     document.getElementById("node-curr").innerText = `Lv.${currentLevel}`;
     document.getElementById("node-next1").innerText = `Lv.${currentLevel + 1}`;
     document.getElementById("node-next2").innerText = `Lv.${currentLevel + 2}`;
     document.getElementById("node-next3").innerText = `🔒 Lv.${currentLevel + 3}`;
+
+    updateMapUI(); // ✅ 刷新進度樣式
 
     document.getElementById("best-score-ui").innerText = bestScore;
     updateCoins();
