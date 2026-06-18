@@ -143,26 +143,48 @@ h1 {
     transform: scale(1);
 }
 
+.skills-panel {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
 .btn-ambulance {
     background: linear-gradient(135deg, #a2ebd2, #8edeb4); 
     color: #27ae60; 
     border: 2px solid #27ae60; 
-    padding: 0 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     border-radius: 12px;
     cursor: pointer;
-    width: 100%;
-    margin-bottom: 6px;
+    width: 50%;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     box-sizing: border-box;
     height: 36px;
-    min-height: 36px;
 }
 .btn-ambulance:disabled { background: #95a5a6 !important; border: none; cursor: not-allowed; opacity: 0.6; color: #fff !important; }
+
+/* 💰 5️⃣ 新增技能：江戶大爆彈消耗按鈕樣式 */
+.btn-megabomb {
+    background: linear-gradient(135deg, #fcd2b6, #fca68a); 
+    color: #d35400; 
+    border: 2px solid #d35400; 
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    box-sizing: border-box;
+    height: 36px;
+}
 
 button:active {
     transform: scale(0.95);
@@ -206,6 +228,7 @@ button:active {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .selected {
@@ -223,15 +246,13 @@ button:active {
     font-size: 26px;
     line-height: 1;
     pointer-events: none;
+    transition: transform 0.2s ease;
 }
 
-.cell-castle {
-    border: 3px solid #d35400 !important;
-    background-color: #fff5e6 !important;
-}
-.cell-torii {
-    border: 3px solid #c0392b !important;
-    background-color: #ffe6e6 !important;
+/* 🧠 7️⃣ 盤面微動畫 Shimmer 特效 */
+.shimmer-cell {
+    transform: scale(1.05);
+    background-color: #fff9e6 !important;
 }
 
 .game-over-modal {
@@ -309,7 +330,6 @@ button.menu-btn {
         <div class="stat-box">⏳ 時間<br><span id="timer-text">90s</span></div>
         <div class="stat-box">👣 步數<br><span id="moves">35</span></div>
         <div class="stat-box">🏆 得分<br><span id="score">0</span></div>
-        <!-- 🪙 1️⃣ 新增：金幣 progression 顯示卡片 -->
         <div class="stat-box">🪙 金幣<br><span id="coin">0</span></div>
         <div class="stat-box" style="cursor:pointer; width:16%; font-size:10px;" onclick="toggleMusic()">🎵音樂<br><span id="music-status" style="color:#2ecc71;">開啟</span></div>
     </div>
@@ -320,9 +340,14 @@ button.menu-btn {
 
     <div id="mission">🔥 廚房急單！載入中...</div>
 
-    <button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
-        ⚡ 緊急整理技能：<span id="rescue-icons">剩 3 次</span>
-    </button>
+    <div class="skills-panel">
+        <button id="ambulance-btn" class="btn-ambulance" onclick="useAmbulanceRescue()">
+            ⚡ 緊急整理：<span id="rescue-icons">3</span>
+        </button>
+        <button id="megabomb-btn" class="btn-megabomb" onclick="useMegaBomb()">
+            💣 江戶炸彈 (20🪙)
+        </button>
+    </div>
 
     <div class="board-container">
         <div id="board" class="board"></div>
@@ -339,9 +364,8 @@ button.menu-btn {
             <p class="highlight">最終分數：<span id="go-score-val">0</span> 分</p>
         </div>
         
-        <!-- 🪙 2️⃣ 新增：金幣復活變現點按鈕 -->
         <button class="menu-btn" style="background:#f1c40f; color:#4a3728;" onclick="reviveWithCoins()">
-            🪙 30 金幣復活 (免看廣告)
+            🪙 30 金幣復活 (重返廚房)
         </button>
         <button class="menu-btn" style="background:#2ecc71; color:white;" onclick="watchAdRevive()">
             ❤️ 看廣告繼續一次
@@ -353,13 +377,8 @@ button.menu-btn {
 
 <script>
 const SIZE = 8;
-const CASTLE = "japanese_castle";
-const TORII = "torii_gate";
 
-// 🎨 Skin系統準備：主代碼底層直接調用高清系統 Emoji，原生發光視覺
 const MASTER_ITEMS = {
-    "japanese_castle": { text: "🏯" },
-    "torii_gate": { text: "⛩️" },
     "salmon_sushi": { text: "🍣" },
     "prawn_sushi": { text: "🍤" },
     "fish_rice": { text: "🍙" },
@@ -377,11 +396,16 @@ let currentLevel = 1, moves = 35, maxTime = 90, timeLeft = 90, timerInterval = n
 let rescueMovesLeft = 3; 
 let mission = {}, targetKey1 = "", targetKey2 = "";
 let reviveUsed = false; 
-let winStreak = 0; // 🚀 8️⃣ 連勝獎勵計數器
+let winStreak = 0; 
+
+// ❗ 1️⃣ 修正重大漏洞：建立全域本局最高連擊計數器
+let maxComboThisRound = 1; 
+
+// 🧠 6️⃣ Hint 冷卻時間戳記
+let lastHintTime = 0;
 
 let userLastActiveTime = Date.now();
 let hintCheckInterval = null;
-let activeHintCells = [];
 
 const board = document.getElementById("board");
 const timerBar = document.getElementById("timer-bar");
@@ -392,19 +416,19 @@ const comboBadge = document.getElementById("combo-badge");
 
 function isLocalGameOver() { return moves <= 0 || timeLeft <= 0; }
 
-// 🪙 1️⃣ & 6️⃣ 金幣帳戶進度與實時 UI 更新
+// 🪙 1️⃣ & 6️⃣ 金幣進度與實時面版對接更新
 let coins = parseInt(localStorage.getItem("coins") || "0");
 function updateCoins(){
     localStorage.setItem("coins", coins);
     document.getElementById("coin").innerText = coins;
 }
 
-// ⚡ 6️⃣ 獨立手機微震動回饋防線
+// ⚡ 6️⃣ 輕量手機微震動回饋機制
 function vibrate(ms=30){
     if(navigator.vibrate) navigator.vibrate(ms);
 }
 
-// ===== 🔊 聲音引擎（音效大幅強化優化） =====
+// ===== 🔊 聲音引擎 =====
 let audioCtx = null, bgmTimer = null, bgmStep = 0;
 const EASON_MELODY = [329.63, 349.23, 392.00, 523.25, 440.00, 392.00, 349.23, 392.00, 440.00];
 
@@ -438,7 +462,6 @@ function safePlaySound(type) {
         const now = audioCtx.currentTime;
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         if (type === 'match') {
-            // 🎼 消除音效優化：音調隨 Combo 階梯遞增，更加清脆、多巴胺爆棚
             osc.type = 'sine'; 
             let pitchFreq = 523.25 * (1 + (currentComboCount - 1) * 0.15);
             osc.frequency.setValueAtTime(pitchFreq, now);
@@ -494,7 +517,6 @@ function create(){
 function hasMatch(g){
     for(let r=0; r<SIZE; r++){
         for(let c=0; c<SIZE; c++){
-            if(g[r][c] === CASTLE || g[r][c] === TORII) continue;
             if(c<=SIZE-3 && g[r][c] && g[r][c]===g[r][c+1] && g[r][c]===g[r][c+2]) return true;
             if(r<=SIZE-3 && g[r][c] && g[r][c]===g[r+1][c] && g[r][c]===g[r+2][c]) return true;
         }
@@ -532,8 +554,6 @@ function render(){
             div.dataset.r = r; div.dataset.c = c;
             if(last && last.r === r && last.c === c) div.classList.add("selected");
             if(cell){
-                if(cell === CASTLE) div.classList.add("cell-castle");
-                if(cell === TORII) div.classList.add("cell-torii");
                 let span = document.createElement("span");
                 span.className = "disk-emoji";
                 span.innerText = MASTER_ITEMS[cell].text;
@@ -545,8 +565,11 @@ function render(){
 }
 
 function clearAutoHints() {
-    activeHintCells.forEach(id => { document.getElementById(id)?.classList.remove("auto-hint-flash"); });
-    activeHintCells = [];
+    for(let r=0; r<SIZE; r++) {
+        for(let c=0; c<SIZE; c++) {
+            document.getElementById(`cell-${r}-${c}`)?.classList.remove("auto-hint-flash");
+        }
+    }
 }
 
 function triggerSearchAndShowHint() {
@@ -571,7 +594,6 @@ function triggerSearchAndShowHint() {
         let id1 = `cell-${bestMove.r}-${bestMove.c}`, id2 = `cell-${bestMove.nr}-${bestMove.nc}`;
         document.getElementById(id1)?.classList.add("auto-hint-flash");
         document.getElementById(id2)?.classList.add("auto-hint-flash");
-        activeHintCells.push(id1, id2);
     }
 }
 
@@ -589,13 +611,26 @@ function estimateMatchScore(g){
 function resetUserInactivityTimer() { userLastActiveTime = Date.now(); clearAutoHints(); }
 clearInterval(hintCheckInterval);
 hintCheckInterval = setInterval(() => { 
-    // 🧠 3️⃣ Auto Hint 概率與時長優化防無腦（延長至8秒，60%機率出現提示）
-    if(Date.now() - userLastActiveTime > 8000) {
+    // 🧠 3️⃣ & 6️⃣ Auto Hint 概率與時長優化防無腦（延長至8秒，60%機率，冷卻15秒）
+    if(Date.now() - userLastActiveTime > 8000 && Date.now() - lastHintTime > 15000) {
         if(Math.random() < 0.6) {
             triggerSearchAndShowHint(); 
+            lastHintTime = Date.now();
         }
     }
 }, 1000);
+
+// 🧠 7️⃣ 盤面 Shimmer 每 2 秒隨機微動畫，維持動態卻不推擠
+setInterval(() => {
+    if (isAnimating || isLocalGameOver()) return;
+    let randR = Math.floor(Math.random() * SIZE);
+    let randC = Math.floor(Math.random() * SIZE);
+    let cellEl = document.getElementById(`cell-${randR}-${randC}`);
+    if(cellEl) {
+        cellEl.classList.add("shimmer-cell");
+        setTimeout(() => cellEl.classList.remove("shimmer-cell"), 400);
+    }
+}, 2000);
 
 board.addEventListener("pointerdown", e => {
     tryInitAudio(); resetUserInactivityTimer();
@@ -620,18 +655,6 @@ board.addEventListener("pointermove", e => {
 
 function executeUserMove(r1, c1, r2, c2) {
     clearAutoHints();
-    
-    if(grid[r1][c1] === TORII || grid[r2][c2] === TORII) {
-        let toriiR = grid[r1][c1] === TORII ? r1 : r2;
-        let toriiC = grid[r1][c1] === TORII ? c1 : c2;
-        let targetColor = grid[r1][c1] === TORII ? grid[r2][c2] : grid[r1][c1];
-        
-        [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
-        render();
-        setTimeout(() => { triggerToriiClear(toriiR, toriiC, targetColor); }, 150);
-        return;
-    }
-
     [grid[r1][c1], grid[r2][c2]] = [grid[r2][c2], grid[r1][c1]];
     render();
 
@@ -647,101 +670,55 @@ function executeUserMove(r1, c1, r2, c2) {
     }, 200);
 }
 
-function triggerToriiClear(toriiR, toriiC, targetColor) {
-    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
-    toRemove[toriiR][toriiC] = true;
-    
-    if(targetColor && targetColor !== CASTLE && targetColor !== TORII) {
-        for(let r=0; r<SIZE; r++) {
-            for(let c=0; c<SIZE; c++) { if(grid[r][c] === targetColor) toRemove[r][c] = true; }
-        }
-    }
-    let targetCell = document.getElementById(`cell-${toriiR}-${toriiC}`);
-    showBonusEffect(targetCell, "⛩️ 鳥居全消！", true);
-    safePlaySound('boom');
-    executeElimination(toRemove);
-    moves--; document.getElementById("moves").innerText = moves;
-}
-
 function checkMatchesAndEliminate(movedR = -1, movedC = -1) {
     let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
     let hasMatchFound = false;
-    let spawnSpecialList = [];
-    let hasCastleTriggered = false;
 
     for(let r=0; r<SIZE; r++){
         let matchLen = 1; let matchStart = 0;
         for(let c=1; c<SIZE; c++){
-            if(grid[r][c] && grid[r][c] === grid[r][c-1] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) matchLen++;
+            if(grid[r][c] && grid[r][c] === grid[r][c-1]) matchLen++;
             else {
                 if(matchLen >= 3) {
                     hasMatchFound = true;
-                    let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
-                    let spawnC = (movedR === r && movedC >= matchStart && movedC < c) ? movedC : matchStart;
                     for(let i=matchStart; i<c; i++) toRemove[r][i] = true;
-                    if(type) spawnSpecialList.push({r: r, c: spawnC, type: type});
                 }
                 matchLen = 1; matchStart = c;
             }
         }
         if(matchLen >= 3) {
             hasMatchFound = true;
-            let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
-            let spawnC = (movedR === r && movedC >= matchStart) ? movedC : matchStart;
             for(let i=matchStart; i<SIZE; i++) toRemove[r][i] = true;
-            if(type) spawnSpecialList.push({r: r, c: spawnC, type: type});
         }
     }
 
     for(let c=0; c<SIZE; c++){
         let matchLen = 1; let matchStart = 0;
         for(let r=1; r<SIZE; r++){
-            if(grid[r][c] && grid[r][c] === grid[r-1][c] && grid[r][c] !== CASTLE && grid[r][c] !== TORII) matchLen++;
+            if(grid[r][c] && grid[r][c] === grid[r-1][c]) matchLen++;
             else {
                 if(matchLen >= 3) {
                     hasMatchFound = true;
-                    let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
-                    let spawnR = (movedC === c && movedR >= matchStart && movedR < r) ? movedR : matchStart;
                     for(let i=matchStart; i<r; i++) toRemove[i][c] = true;
-                    if(type) spawnSpecialList.push({r: spawnR, c: c, type: type});
                 }
                 matchLen = 1; matchStart = r;
             }
         }
         if(matchLen >= 3) {
             hasMatchFound = true;
-            let type = (matchLen === 4) ? CASTLE : (matchLen >= 5 ? TORII : null);
-            let spawnR = (movedC === c && movedR >= matchStart) ? movedR : matchStart;
             for(let i=matchStart; i<SIZE; i++) toRemove[i][c] = true;
-            if(type) spawnSpecialList.push({r: spawnR, c: c, type: type});
-        }
-    }
-
-    let checkedSpecial = true;
-    while(checkedSpecial) {
-        checkedSpecial = false;
-        for(let r=0; r<SIZE; r++) {
-            for(let c=0; c<SIZE; c++) {
-                if(toRemove[r][c] && grid[r][c] === CASTLE) {
-                    hasCastleTriggered = true;
-                    for(let i=0; i<SIZE; i++) {
-                        if(!toRemove[r][i]) { toRemove[r][i] = true; checkedSpecial = true; }
-                        if(!toRemove[i][c]) { toRemove[i][c] = true; checkedSpecial = true; }
-                    }
-                }
-            }
         }
     }
 
     if(hasMatchFound){
-        if(hasCastleTriggered) { safePlaySound('boom'); } else { safePlaySound('match'); }
-        executeElimination(toRemove, spawnSpecialList);
+        safePlaySound('match');
+        executeElimination(toRemove);
         return true;
     }
     return false;
 }
 
-function executeElimination(toRemove, spawnSpecialList = []) {
+function executeElimination(toRemove) {
     let removedCount = 0; let targetCellEl = null;
     for(let r=0; r<SIZE; r++){
         for(let c=0; c<SIZE; c++){
@@ -754,27 +731,20 @@ function executeElimination(toRemove, spawnSpecialList = []) {
         }
     }
 
-    // ⚡ 6️⃣ 震動回饋升級（成功消除微震 20ms，大連鎖爆擊震 60ms）
+    // ⚡ 6️⃣ 手機震動回饋：消除微震 20ms，爆擊大消除強震 60ms
     if(removedCount >= 4) { vibrate(60); } else if(removedCount > 0) { vibrate(20); }
 
-    spawnSpecialList.forEach(item => {
-        grid[item.r][item.c] = item.type;
-        let cellSpan = document.getElementById(`cell-${item.r}-${item.c}`);
-        if(item.type === CASTLE) showBonusEffect(cellSpan, "🏯 古城生成", true);
-        if(item.type === TORII) showBonusEffect(cellSpan, "⛩️ 鳥居生成", true);
-    });
-
-    let addedTime = spawnSpecialList.length > 0 ? 5.0 : 2.0; 
+    let addedTime = 2.0; 
     timeLeft = Math.min(maxTime, timeLeft + addedTime); 
     if(targetCellEl) showBonusEffect(targetCellEl, `+${addedTime.toFixed(0)}s`);
 
-    // 💥 2️⃣ 新增：大消除爆擊分數字彈跳特效
+    // 💥 2️⃣ 新增：大消除爆擊分數字彈跳特效 (帶入 Combo 與連勝加成)
     if(removedCount >= 4 && targetCellEl){
-        showBonusEffect(targetCellEl, `💥 +${removedCount * 80 * currentComboCount}`, true);
+        showBonusEffect(targetCellEl, `💥 +${Math.floor(removedCount * 80 * currentComboCount * (1 + winStreak * 0.1))}`, true);
     }
 
-    // 💥 4️⃣ Combo 上癮公式重改：計分大爆炸
-    score += removedCount * 80 * currentComboCount;
+    // 💥 4️⃣ Combo 上癮公式重組 (帶入連勝乘積加成)
+    score += Math.floor(removedCount * 80 * currentComboCount * (1 + winStreak * 0.1));
     
     let scoreEl = document.getElementById("score");
     scoreEl.innerText = score;
@@ -796,13 +766,16 @@ function drop(){
         let matched = checkMatchesAndEliminate();
         if(matched) { 
             currentComboCount++; 
+            // ❗ 1️⃣ 橫向檢查並更新本局最大 combo
+            if(currentComboCount > maxComboThisRound) {
+                maxComboThisRound = currentComboCount;
+            }
             renderMission(); 
         }
         else { isAnimating = false; checkGameStatus(false); if(countPossibleMoves(grid) < 1 && !isLocalGameOver()) { grid = generateValidGrid(); render(); } }
     }, 200);
 }
 
-// ✅ 1️⃣ 消失延遲優化：留 0.8 秒連擊多巴胺爽感
 function renderMission() {
     const missionEl = document.getElementById("mission"); if(!targetKey1 || !targetKey2) return;
     
@@ -822,14 +795,29 @@ function renderMission() {
 function checkGameStatus(timeOut = false) {
     if (mission[targetKey1] <= 0 && mission[targetKey2] <= 0) {
         clearInterval(timerInterval); 
-        currentLevel++; 
-        winStreak++; // 🚀 連勝累加
         
-        // 🚀 8️⃣ 營收級每日任務獎勵判定
-        if(currentLevel === 4) { coins += 20; alert("🏆 任務達成：成功通過3關！獲得 +20 金幣！🪙"); updateCoins(); }
-        if(currentComboCount >= 5) { coins += 30; alert("🔥 任務達成：達成 5 Combo 連擊！獲得 +30 金幣！🪙"); updateCoins(); }
+        winStreak++; 
         
-        setupLevel(); 
+        // ❗ 1️⃣ 任務機制真正成立：整局最高 Combo 任務檢查
+        if(maxComboThisRound >= 5) {
+            coins += 30;
+            alert(`🔥 恭喜觸發整局神級連擊任務 (最高 ${maxComboThisRound} 連)！獲得 +30 金幣！🪙`);
+        }
+        
+        // 🌟 2️⃣ 連勝金幣循環線
+        if(winStreak % 3 === 0) {
+            coins += 20;
+            alert(`✨ 達成 ${winStreak} 連勝里程碑！額外特賞 +20 金幣！🪙`);
+        }
+
+        updateCoins();
+
+        // 🎉 4️⃣ 增加關卡完成的大爆發儀式感彈窗
+        setTimeout(() => {
+            alert(`🎉 成功交付訂單！完成第 ${currentLevel} 關！\n🌟 目前連勝紀錄：${winStreak} 🔥`);
+            currentLevel++; 
+            setupLevel();
+        }, 200);
         return;
     } 
     if (moves <= 0 || timeOut) { 
@@ -847,19 +835,44 @@ function checkGameStatus(timeOut = false) {
         document.getElementById("go-streak-val").innerText = winStreak;
         document.getElementById("go-score-val").innerText = score;
         
-        winStreak = 0; // 輸掉時連勝歸零
+        winStreak = 0; 
         document.getElementById("gameOverModal").style.display = "flex"; 
     }
 }
 
-// 🪙 2️⃣ 新增：金幣復活機制（扣除 30 金幣免看廣告）
+// 💰 5️⃣ 新增金幣核心消耗點：隨機消去單一品種的江戶大爆彈技能
+function useMegaBomb() {
+    if(isAnimating || isLocalGameOver()) return;
+    if(coins < 20) {
+        alert("⚠️ 金幣不足 20 枚！快去通關或保持連勝賺取吧！");
+        return;
+    }
+    coins -= 20;
+    updateCoins();
+    vibrate(80);
+    safePlaySound('boom');
+
+    let randomTargetType = currentLevelTypes[Math.floor(Math.random() * currentLevelTypes.length)];
+    let toRemove = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+    
+    for(let r=0; r<SIZE; r++) {
+        for(let c=0; c<SIZE; c++) {
+            if(grid[r][c] === randomTargetType) toRemove[r][c] = true;
+        }
+    }
+    
+    isAnimating = true;
+    executeElimination(toRemove);
+}
+
+// ❗ 3️⃣ 緊湊 Revive 續命機制調整：杜絕無腦躺過
 function reviveWithCoins(){
     if(coins < 30){
-        alert("⚠️ 金幣不足！先通過挑戰賺取金幣，或者選擇看廣告復活吧！");
+        alert("⚠️ 金幣不足！");
         return;
     }
     if(reviveUsed){
-        alert("⚠️ 本局已使用過復活！每場只能續命一次！");
+        alert("⚠️ 本局已使用過復活！");
         return;
     }
     coins -= 30;
@@ -867,8 +880,8 @@ function reviveWithCoins(){
     updateCoins();
     
     document.getElementById("gameOverModal").style.display = "none";
-    moves = 10;
-    timeLeft = 30;
+    moves = 6;  // 🤏 精準控制，保留骨灰級通關緊張感
+    timeLeft = 20; 
     document.getElementById("moves").innerText = moves;
     startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
@@ -880,10 +893,10 @@ function watchAdRevive() {
         return;
     }
     reviveUsed = true;
-    alert("🎬 廣告播放完畢！立即重返戰場！");
+    alert("🎬 廣告播放完畢！");
     document.getElementById("gameOverModal").style.display = "none";
-    moves = 10; 
-    timeLeft = 30; 
+    moves = 6; 
+    timeLeft = 20; 
     document.getElementById("moves").innerText = moves;
     startTimer();
     if(audioCtx && !musicUserToggled) startBGM();
@@ -893,7 +906,7 @@ function restartWholeGame() { document.getElementById("gameOverModal").style.dis
 function returnToGameHome() { document.getElementById("gameOverModal").style.display = "none"; currentLevel = 1; score = 0; document.getElementById("score").innerText = score; setupLevel(); }
 
 function updateRescueUI() {
-    rescueIconsEl.innerText = `剩 ${rescueMovesLeft} 次`;
+    rescueIconsEl.innerText = rescueMovesLeft;
     if(rescueMovesLeft <= 0) { ambulanceBtn.disabled = true; }
 }
 
@@ -905,16 +918,17 @@ function useAmbulanceRescue() {
 
 function setupLevel() {
     reviveUsed = false; 
-    let poolSize = currentLevel >= 15 ? 8 : (currentLevel >= 6 ? 6 : 4);
+    maxComboThisRound = 1; // 每個新關卡重置本局最大 Combo
     
-    let allKeys = Object.keys(MASTER_ITEMS).filter(k => k !== CASTLE && k !== TORII);
+    let poolSize = currentLevel >= 15 ? 8 : (currentLevel >= 6 ? 6 : 4);
+    let allKeys = Object.keys(MASTER_ITEMS);
     allKeys.sort(() => 0.5 - Math.random()); 
     currentLevelTypes = allKeys.slice(0, poolSize); 
     
     targetKey1 = currentLevelTypes[0]; 
     targetKey2 = currentLevelTypes[1];
     
-    // 🎯 5️⃣ 「難度節奏爆改」平滑難度曲線調整
+    // 📈 5️⃣ 平滑難度洗牌曲線優化
     let targetCount = Math.min(60, 6 + Math.floor(currentLevel * 1.5)); 
     mission = { [targetKey1]: targetCount, [targetKey2]: targetCount };
     
@@ -931,17 +945,15 @@ function setupLevel() {
 }
 
 window.onload = function() { 
-    // 🧠 7️⃣ 缺少「教學引導」機制
     if(!localStorage.getItem("tutorial")){
-        alert("🧠 歡迎光臨活腦壽司坊！\n👉 滑動相鄰壽司進行位置交換，連成 3 個或以上相同圖案即可消除！\n鎖定急單目標，一起來活化大腦吧！");
+        alert("🧠 歡迎光臨活腦壽司坊！\\n👉 滑動相鄰壽司進行位置交換，連成 3 個即可消除！\\n鎖定急單目標，一起來活化大腦吧！");
         localStorage.setItem("tutorial", "1");
     }
 
-    // 🎁 每日獎勵登入
     if(!localStorage.getItem("dailyReward") || Date.now() - localStorage.getItem("dailyReward") > 24 * 60 * 60 * 1000){
         coins += 50;
         updateCoins();
-        alert(`🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已存入帳戶。\n目前金幣總數：${coins} 🪙`);
+        alert(`🎁 歡迎回到壽司坊！今日登入獎勵 +50 金幣！已自動存入帳戶。\\n目前金幣總數：${coins} 🪙`);
         localStorage.setItem("dailyReward", Date.now());
     }
     setupLevel(); 
