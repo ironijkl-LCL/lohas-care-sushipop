@@ -25,41 +25,38 @@ body {
     transition: background 0.1s ease, filter 0.1s ease;
 }
 
-/* 🎯 終極響應式手遊卡片防線 */
+/* 🎯 ✅ 超爽滿屏版：頂底錨定防線，徹底免除 iPhone Bar 壓縮跳動 */
 .container {
-    width: 96vw;
-    max-width: 440px;
-    height: 96vh;
-    max-height: 650px;
+    width: 100vw;
+    height: 100vh; /* 強制吃滿全屏 */
+    max-width: 500px; /* 大機極限 */
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    padding: 12px;
+    padding: 10px; /* 極窄安全邊距，擴大核心作戰區 */
     text-align: center;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; 
+    justify-content: space-between; /* 精準均勻分配，把棋盤和急單頂到最舒服的手指觸控區 */
     position: relative; 
 }
 
-h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
-@media screen and (min-width: 440px) { h1 { font-size: 24px; } }
+h1 { font-size: 6vw; color: #ff6b6b; margin: 0; padding: 0; line-height: 1.1; }
+@media screen and (min-width: 480px) { h1 { font-size: 26px; } }
 
 .level-maps-bar {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2vw;
-    margin: 2px 0;
+    margin: 0;
     font-size: 11px;
     font-weight: bold;
     color: #7f8c8d;
 }
-.map-node { padding: 2px 6px; background: #e0e0e0; border-radius: 6px; transition: all 0.3s; }
+.map-node { padding: 1px 6px; background: #e0e0e0; border-radius: 6px; transition: all 0.3s; }
 .map-node.active { background: #ff6b6b; color: white; transform: scale(1.05); }
 
-.stats { display: flex; justify-content: space-between; margin: 2px 0; gap: 4px; }
+.stats { display: flex; justify-content: space-between; margin: 0; gap: 4px; }
 .stat-box {
     background: #f7f7f7; border-radius: 12px; padding: 4px 2px;
     width: 19%; font-size: 11px; font-weight: bold; color: #4a3728;
@@ -69,18 +66,18 @@ h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
 
 .timer-container {
     width: 100%; background: #eddcc9; height: 8px; border-radius: 4px;
-    margin: 2px 0; overflow: hidden; position: relative; border: 1px solid #4a3728;
+    margin: 0; overflow: hidden; position: relative; border: 1px solid #4a3728;
 }
 .timer-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff6b6b, #ff4d4d); transition: width 0.1s linear; }
 
 #mission {
-    background: #fff7e6; border-radius: 12px; margin: 2px 0;
-    font-size: 13px; font-weight: bold; color: #2c3e50; border: 1px solid #f1c40f;
+    background: #fff7e6; border-radius: 12px; margin: 0;
+    font-size: 14px; font-weight: bold; color: #2c3e50; border: 1px solid #f1c40f;
     display: flex; justify-content: center; align-items: center; height: 38px; box-sizing: border-box;
 }
 
 .combo-floating-badge {
-    position: absolute; top: 16%; right: 15px;
+    position: absolute; top: 15%; right: 15px;
     background: linear-gradient(135deg, #ff4d4d, #ff6b6b); color: white;
     padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 900;
     box-shadow: 0 4px 8px rgba(255,61,61,0.3); z-index: 999;
@@ -88,14 +85,14 @@ h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
 }
 .combo-active { opacity: 1; transform: scale(1); }
 
-.shop-panel { display: flex; justify-content: space-between; gap: 4px; margin: 2px 0; }
+.shop-panel { display: flex; justify-content: space-between; gap: 4px; margin: 0; }
 .shop-item {
     flex: 1; background: #fff2e6; border: 1px dashed #e67e22; border-radius: 8px;
     padding: 4px 2px; font-size: 10px; font-weight: bold; cursor: pointer; transition: all 0.2s;
 }
 .shop-item.bought { background: #e67e22; color: white; border-style: solid; }
 
-.skills-panel { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 2px; }
+.skills-panel { display: flex; justify-content: space-between; gap: 6px; margin: 0; }
 .btn-ambulance {
     background: linear-gradient(135deg, #a2ebd2, #8edeb4); color: #27ae60; border: 2px solid #27ae60; 
     font-size: 12px; font-weight: bold; border-radius: 12px; width: 50%; height: 34px; cursor: pointer;
@@ -108,7 +105,7 @@ h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
 
 .board-container { width: 100%; display: flex; justify-content: center; }
 
-/* 👑 👉 ✅ 最平衡版本：自動適應手機與最大寬高完美防線 */
+/* 🔥 ✅ 超爽滿屏版：極致滿版正方形棋盤佈局 */
 .board {
     display: grid; 
     grid-template-columns: repeat(8, 1fr); 
@@ -119,10 +116,10 @@ h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
     border: 3px solid #4a3728;
     touch-action: none !important; 
     
-    width: 92vw; 
-    height: 92vw;
-    max-width: 420px; 
-    max-height: 420px; 
+    width: 95vw; 
+    height: 95vw;
+    max-width: 480px; 
+    max-height: 480px; 
     box-sizing: border-box;
 }
 
@@ -131,13 +128,13 @@ h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
     position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     display: flex; align-items: center; justify-content: center;
     box-sizing: border-box;
-    overflow: hidden; /* 防止特殊動態抖動時擠壓到外層網格 */
+    overflow: hidden; 
     transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .selected { border: 3px solid #e74c3c !important; background: #fff0f0 !important; }
 .auto-hint-flash { border: 2px solid #f1c40f !important; background-color: #fef5c8 !important; }
 
-/* 👑 👉 ✅ 最平衡版本：Emoji 字型大小完美自適應響應 */
+/* 🔥 ✅ 超爽滿屏版：壽司飽滿度極致升級比例 */
 .disk-emoji { 
     font-size: 7.5vw; 
     line-height: 1; 
@@ -179,7 +176,7 @@ button.menu-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; bo
     <div id="combo-badge" class="combo-floating-badge">🔥 COMBO x2</div>
 
     <h1>🍣 Sushi Pop 壽司彈彈樂 VIP ✨</h1>
-    <div style="font-size:11px; color:#999; margin-bottom: 2px;">全港熱玩🔥 完美黃金比例（RWD 防爆版）</div>
+    <div style="font-size:11px; color:#999;">全港熱玩🔥 100% Full-Screen 滿全版流暢防抖版</div>
     
     <div class="level-maps-bar" id="map-bar">
         <span class="map-node active" id="node-curr">Lv.1</span> ➔ 
