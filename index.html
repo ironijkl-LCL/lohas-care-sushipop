@@ -25,12 +25,12 @@ body {
     transition: background 0.1s ease, filter 0.1s ease;
 }
 
-/* 🎯 ✅ 方案 A：自動適應手機佈局重構（消除硬編碼 px 限制） */
+/* 🎯 終極響應式手遊卡片防線 */
 .container {
-    width: 95vw;
-    max-width: 420px;
-    height: 95vh;
-    max-height: 640px;
+    width: 96vw;
+    max-width: 440px;
+    height: 96vh;
+    max-height: 650px;
     background: white;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -39,12 +39,12 @@ body {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* 確保內部元件在細機與大機都能均勻分佈 */
+    justify-content: space-between; 
     position: relative; 
 }
 
-h1 { font-size: 5.5vw; color: #ff6b6b; margin: 0; }
-@media screen and (min-width: 420px) { h1 { font-size: 24px; } }
+h1 { font-size: 5.8vw; color: #ff6b6b; margin: 0; }
+@media screen and (min-width: 440px) { h1 { font-size: 24px; } }
 
 .level-maps-bar {
     display: flex;
@@ -108,13 +108,21 @@ h1 { font-size: 5.5vw; color: #ff6b6b; margin: 0; }
 
 .board-container { width: 100%; display: flex; justify-content: center; }
 
-/* 🎯 ✅ 方案 A：自動適應手機（極限等比例自適應正方形防線） */
+/* 👑 👉 ✅ 最平衡版本：自動適應手機與最大寬高完美防線 */
 .board {
-    display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; 
-    background: #ffffff; padding: 6px; border-radius: 16px; border: 3px solid #4a3728;
+    display: grid; 
+    grid-template-columns: repeat(8, 1fr); 
+    gap: 4px; 
+    background: #ffffff; 
+    padding: 6px; 
+    border-radius: 16px; 
+    border: 3px solid #4a3728;
     touch-action: none !important; 
-    width: 88vw; height: 88vw;
-    max-width: 350px; max-height: 350px; 
+    
+    width: 92vw; 
+    height: 92vw;
+    max-width: 420px; 
+    max-height: 420px; 
     box-sizing: border-box;
 }
 
@@ -123,14 +131,24 @@ h1 { font-size: 5.5vw; color: #ff6b6b; margin: 0; }
     position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     display: flex; align-items: center; justify-content: center;
     box-sizing: border-box;
+    overflow: hidden; /* 防止特殊動態抖動時擠壓到外層網格 */
     transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .selected { border: 3px solid #e74c3c !important; background: #fff0f0 !important; }
 .auto-hint-flash { border: 2px solid #f1c40f !important; background-color: #fef5c8 !important; }
 
-/* 讓壽司 Emoji 字型大小也隨視窗寬度自適應縮放，確保不爆框 */
-.disk-emoji { font-size: 6.5vw; line-height: 1; pointer-events: none; transition: transform 0.1s ease; }
-@media screen and (min-width: 420px) { .disk-emoji { font-size: 26px; } }
+/* 👑 👉 ✅ 最平衡版本：Emoji 字型大小完美自適應響應 */
+.disk-emoji { 
+    font-size: 7.5vw; 
+    line-height: 1; 
+    pointer-events: none; 
+    display: inline-block;
+    transition: transform 0.1s ease; 
+}
+
+@media screen and (min-width: 420px) { 
+    .disk-emoji { font-size: 30px; } 
+}
 
 /* 彈窗 */
 .game-over-modal {
@@ -161,7 +179,7 @@ button.menu-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; bo
     <div id="combo-badge" class="combo-floating-badge">🔥 COMBO x2</div>
 
     <h1>🍣 Sushi Pop 壽司彈彈樂 VIP ✨</h1>
-    <div style="font-size:11px; color:#999; margin-bottom: 2px;">全港熱玩🔥 全機型完美自適應適配版</div>
+    <div style="font-size:11px; color:#999; margin-bottom: 2px;">全港熱玩🔥 完美黃金比例（RWD 防爆版）</div>
     
     <div class="level-maps-bar" id="map-bar">
         <span class="map-node active" id="node-curr">Lv.1</span> ➔ 
